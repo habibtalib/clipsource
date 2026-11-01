@@ -1,20 +1,65 @@
-# ClipSource
+<p align="center">
+  <img src="docs/assets/banner.png" alt="ClipSource: know where every copy came from" width="100%">
+</p>
 
-A macOS menu-bar clipboard manager that records **where every copy came from**: the app, the window or chat title, and, for copies made by AI coding sessions, the session, project folder and a label. It ships with a CLI and an [MCP](https://modelcontextprotocol.io) server, so Claude Code and other MCP clients can copy with a tag and read the history.
+<p align="center">
+  <a href="https://github.com/habibtalib/clipsource/actions/workflows/ci.yml"><img src="https://github.com/habibtalib/clipsource/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/macOS-14%2B-1B2238?logo=apple&logoColor=white" alt="macOS 14+">
+  <img src="https://img.shields.io/badge/Swift-5.10-E5483A?logo=swift&logoColor=white" alt="Swift 5.10">
+  <img src="https://img.shields.io/badge/MCP-server-FF8A4C" alt="MCP server">
+  <img src="https://img.shields.io/badge/dependencies-zero-2A9D8F" alt="Zero dependencies">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1B2238" alt="MIT License"></a>
+  <a href="https://github.com/habibtalib/clipsource/stargazers"><img src="https://img.shields.io/github/stars/habibtalib/clipsource?style=flat&color=FF8A4C" alt="GitHub stars"></a>
+</p>
 
-Use it when several chats, terminals and agent sessions all write to your clipboard, so you can still tell which one an entry came from.
+<p align="center">
+  <b>A macOS clipboard manager that remembers <i>where</i> every copy came from:</b><br>
+  the app, the window or chat, and the AI session that copied it.
+</p>
 
-- **Source per entry.** Each entry records the app, its focused window title, a label, the session ID, the working directory and the terminal.
-- **Menu bar plus hotkey.** The menu bar shows the latest copy's source live. Search, group by source, and click to copy back. Press ⌥⌘V for a floating panel.
-- **Desktop widgets.** *Latest Copy* (small, medium) and *Recent Copies* (medium, large). Click a row to copy it again.
-- **CLI.** `clipsrc copy --label "Reply to Sam"` works as a drop-in for `pbcopy` and adds the tag.
-- **MCP server.** `clipboard_copy`, `clipboard_history`, `clipboard_search`, `clipboard_get` and `clipboard_restore`.
-- **Private by default.** History stays local in SQLite. Password-manager copies (concealed types) and excluded apps are never stored.
-- **Zero dependencies.** Swift, SwiftUI, AppKit and the system SQLite (FTS5).
+<p align="center">
+  <a href="#-install">Install</a> ·
+  <a href="#-features">Features</a> ·
+  <a href="#-desktop-widgets">Widgets</a> ·
+  <a href="#-cli">CLI</a> ·
+  <a href="#-mcp-server">MCP</a> ·
+  <a href="#-privacy">Privacy</a>
+</p>
 
-Requires macOS 14 or later.
+---
 
-## Install
+## 🎬 See it in action
+
+<p align="center">
+  <a href="docs/assets/clipsource-demo.mp4">
+    <img src="docs/assets/clipsource-demo.gif" alt="ClipSource demo: copies get tagged with their source, live menu bar, widgets, CLI and MCP" width="100%">
+  </a>
+  <br>
+  <sub>▶ <a href="docs/assets/clipsource-demo.mp4">Watch the MP4 with sound</a> (27 s)</sub>
+</p>
+
+## 🤔 Why
+
+Say you have three Claude Code sessions, a WhatsApp group, Slack and a browser all writing to one clipboard. You paste, and only then wonder which chat the text was for and which session wrote it.
+
+**ClipSource puts a tag on every copy.** Each tag records the app, the window title (which shows the chat or terminal tab), and, for copies made by AI agents, a label, the session ID and the project folder. Search the history, see the latest source live in the menu bar, and copy any entry again with one click.
+
+## ✨ Features
+
+| | |
+|---|---|
+| 🏷️ **Source on every entry** | App, bundle ID, focused window or chat title, label, session ID, working directory, terminal |
+| 📍 **Live menu-bar status** | The menu bar shows where the latest copy came from, such as `Reply to Sam` or `WhatsApp` |
+| ⌨️ **⌥⌘V panel** | Floating search over the whole history. Group by source, then click to copy again. |
+| 🧩 **Desktop widgets** | *Latest Copy* and *Recent Copies*, updated on every clipboard change. Click a row to copy it again. |
+| 🖥️ **`clipsrc` CLI** | A drop-in for `pbcopy` that adds a tag: `echo hi \| clipsrc copy --label "Sam reply"` |
+| 🤖 **MCP server** | AI agents copy with a label and read or search the history, for example from Claude Code |
+| 🔒 **Private by default** | History stays local in SQLite. Password-manager copies and excluded apps are never stored. |
+| 🪶 **Zero dependencies** | Swift, SwiftUI, AppKit, WidgetKit and the system SQLite (FTS5). That's all. |
+
+## 🚀 Install
+
+Requires **macOS 14 or later** and Xcode 15+ (or the Swift toolchain).
 
 ```bash
 git clone https://github.com/habibtalib/clipsource.git
@@ -23,55 +68,71 @@ Scripts/bundle-app.sh --install
 open ~/Applications/ClipSource.app
 ```
 
-This installs `ClipSource.app` in `~/Applications`, and `clipsrc` and `clipsource-mcp` in `~/.local/bin`. Make sure `~/.local/bin` is on your `PATH`.
+This installs `ClipSource.app` in `~/Applications`, and `clipsrc` and `clipsource-mcp` in `~/.local/bin` (add that folder to your `PATH`).
 
-### With widgets (signed build)
+<details>
+<summary><b>With desktop widgets (signed build)</b></summary>
 
-Widgets need a team-signed app that shares an App Group with the widget extension, so they come from an Xcode build. A free Personal Team works; find your team ID in *Xcode → Settings → Accounts*.
+Widgets need a team-signed app that shares an App Group with the widget extension. A free Personal Team works; find your team ID in *Xcode → Settings → Accounts*.
 
 ```bash
 brew install xcodegen
 CLIPSOURCE_TEAM=<your team id> Scripts/build-widgets.sh --install
 ```
 
-Then right-click the desktop, choose *Edit Widgets*, search for ClipSource and add *Latest Copy* or *Recent Copies*. The app rewrites the widget snapshot and reloads the widgets on every clipboard change. Relative times tick live. To keep clipboard text off the desktop, turn on *Settings → Hide clipboard text in widgets*.
+</details>
 
-The SwiftPM build (`bundle-app.sh`) has everything except widgets.
+<details>
+<summary><b>Permissions</b></summary>
 
-### Permissions
+- **Accessibility** (*System Settings → Privacy & Security → Accessibility*) lets ClipSource read window titles: chat names, terminal tabs and browser tabs. Without it, only the app name is recorded.
+- The SwiftPM build is ad-hoc signed, so after each rebuild remove ClipSource from the Accessibility list and add it again.
+- For the CLI and MCP server to record the terminal's window title too, give your terminal app (Terminal, iTerm2, …) Accessibility permission as well.
 
-To record window titles (chat names, terminal tab titles, browser tabs), ClipSource needs **Accessibility** permission: *System Settings → Privacy & Security → Accessibility*. The app asks on first launch. Without the permission it still records the app name.
+</details>
 
-The app is ad-hoc signed, so macOS treats each rebuild as a new app. After rebuilding, remove ClipSource from the Accessibility list and add it again.
+## 🧠 How it works
 
-For the CLI and MCP server to record the terminal's window title too, give your terminal app (Terminal, iTerm2, and so on) Accessibility permission as well.
+```mermaid
+flowchart LR
+    A["⌘C in any app"] --> W["Pasteboard watcher<br/>(menu-bar app)"]
+    B["clipsrc copy --label"] --> S
+    C["MCP clipboard_copy"] --> S
+    W -->|"app + window title"| S[("SQLite + FTS5<br/>history")]
+    S --> M["Menu bar status<br/>⌥⌘V panel"]
+    S --> G["Widget snapshot<br/>(App Group)"] --> X["Desktop widgets"]
+    S --> Q["clipsrc list / search<br/>MCP history / search"]
+```
 
-## How the source is captured
-
-| Copy made by | Recorded |
+| Copy made by | What gets recorded |
 |---|---|
-| You (⌘C in any app) | Frontmost app, bundle ID, focused window title |
-| `clipsrc copy` | The above, plus `--label`, the current directory, `$TERM_PROGRAM` and the session ID |
-| MCP `clipboard_copy` | Same as `clipsrc`. The folder is the MCP client's project directory. |
+| You (⌘C anywhere) | Frontmost app, bundle ID, focused window title |
+| `clipsrc copy` | The above, plus `--label`, the current folder, `$TERM_PROGRAM` and the session ID |
+| MCP `clipboard_copy` | Same as `clipsrc`. The folder is the agent's project directory. |
 
-The session ID is taken from `$CLIPSOURCE_SESSION`, then `$CLAUDE_SESSION_ID`, then `$CLAUDE_CODE_SESSION_ID`.
+The session ID is taken from `$CLIPSOURCE_SESSION`, then `$CLAUDE_SESSION_ID`, then `$CLAUDE_CODE_SESSION_ID`. The CLI and MCP server write the entry before setting the clipboard, and the watcher skips content recorded in the last 3 s, so each copy is stored once with the fullest source.
 
-The CLI and MCP server write the entry before setting the clipboard. The app's watcher skips any content recorded in the last 3 seconds, so each copy is stored once and the richer source is kept. Copying identical text again moves the existing entry to the top with the new source.
+## 🧩 Desktop widgets
 
-## CLI
+| Widget | Sizes | Shows |
+|---|---|---|
+| **Latest Copy** | small, medium | The newest entry, its source and a live "copied … ago" |
+| **Recent Copies** | medium, large | The last 3 or 6 entries by source. Click one to copy it again (`clipsource://restore/<id>`). |
+
+Turn on *Settings → Hide clipboard text in widgets* to keep clipboard text off your desktop.
+
+## 💻 CLI
 
 ```bash
 echo "Draft reply" | clipsrc copy --label "Sam reply"   # copy and tag
-clipsrc copy --label notes some words here               # text as arguments
 clipsrc list --limit 10                                   # recent entries
-clipsrc list --app WhatsApp --since 2h --json
-clipsrc search invoice
+clipsrc list --app WhatsApp --since 2h --json             # filter, JSON output
+clipsrc search invoice                                    # full-text search
 clipsrc get 42                                            # full text and source
 clipsrc restore 42                                        # copy entry 42 back to the clipboard
-clipsrc path                                              # database location
 ```
 
-## MCP server
+## 🤖 MCP server
 
 ```bash
 claude mcp add clipsource -s user -- ~/.local/bin/clipsource-mcp
@@ -80,39 +141,45 @@ claude mcp add clipsource -s user -- ~/.local/bin/clipsource-mcp
 | Tool | Arguments | Does |
 |---|---|---|
 | `clipboard_copy` | `text`, `label?` | Sets the clipboard and records the source |
-| `clipboard_history` | `limit?`, `app?`, `label?`, `since?` (`30m`, `2h`, `7d` or ISO 8601) | Lists recent entries with source and preview |
-| `clipboard_search` | `query`, `limit?` | Full-text search over text, labels, window titles and apps |
+| `clipboard_history` | `limit?`, `app?`, `label?`, `since?` | Lists recent entries with source and preview |
+| `clipboard_search` | `query`, `limit?` | Full-text search over text, labels, windows and apps |
 | `clipboard_get` | `id` | Returns the full text and source details |
 | `clipboard_restore` | `id` | Puts an older entry back on the clipboard |
 
-Example instruction for an agent: *"Copy the draft with `clipboard_copy` and label it with the chat it's for."*
+> **Tip:** tell your agent *"copy drafts with `clipboard_copy` and label them with the chat they're for"*. Every draft then shows up in the menu bar and widgets with its destination.
 
-## Data and privacy
+## 🔒 Privacy
 
-- History is stored in `~/Library/Application Support/ClipSource/history.sqlite`; set `$CLIPSOURCE_DB` to use a different file. The database runs in WAL mode, so the app, CLI and MCP server can use it at the same time.
-- Text only, up to 1 MB per entry.
-- By default, history is kept for 30 days or 5,000 entries; change this in Settings.
-- Never stored:
-  - Contents marked `org.nspasteboard.ConcealedType`, `TransientType` or `AutoGeneratedType`, which password managers set.
-  - Copies from excluded apps. The defaults are 1Password, Keychain Access, Passwords and Bitwarden; edit the list in Settings.
-- "Pause" in the menu stops recording.
-- Widgets read only a small snapshot of the last 6 entries (160-character previews) from the App Group container.
-- Nothing is sent over the network.
+- 🏠 **Local only.** History lives in `~/Library/Application Support/ClipSource/history.sqlite` (override with `$CLIPSOURCE_DB`). Nothing is sent over the network.
+- 🙈 **Never stored:** contents marked `org.nspasteboard.ConcealedType`, `TransientType` or `AutoGeneratedType` by password managers, and copies from excluded apps (1Password, Keychain Access, Passwords and Bitwarden by default).
+- ⏸️ **Pause** recording from the menu.
+- 🧹 **Retention:** 30 days or 5,000 entries by default, text only, up to 1 MB per entry.
+- 🧩 **Widgets** read only a small snapshot of the last 6 entries, with 160-character previews.
 
-## Development
+## 🛠️ Development
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+```bash
+swift build && swift test        # library, app, CLI, MCP server, and 13 unit tests
+swift run ClipSource             # run the menu-bar app unbundled
+```
 
 ```
-Sources/ClipCore         Store (SQLite + FTS5), watcher, source resolver, privacy policy, shared actions
+Sources/ClipCore         Store (SQLite + FTS5), watcher, source resolver, privacy, widget snapshot
 Sources/ClipSourceApp    SwiftUI menu-bar app, ⌥⌘V panel, settings
-Widget/                  WidgetKit extension (reads the App Group snapshot)
-project.yml, Xcode/      XcodeGen spec, Info.plists and entitlements for the signed build
 Sources/clipsrc          CLI
 Sources/clipsource-mcp   MCP server (stdio JSON-RPC)
-Tests/ClipCoreTests      Unit tests
+Widget/                  WidgetKit extension
+project.yml, Xcode/      XcodeGen spec, plists, entitlements, app icon (signed build)
+docs/assets/             Logo, banner and demo video
 ```
 
-## License
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-[MIT](LICENSE)
+## 📄 License
+
+[MIT](LICENSE) © Habib Talib
+
+<p align="center">
+  <img src="docs/assets/logo-128.png" width="64" alt="ClipSource logo"><br>
+  <sub>If ClipSource saves you a wrong paste, consider giving it a ⭐</sub>
+</p>

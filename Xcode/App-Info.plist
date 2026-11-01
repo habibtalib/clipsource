@@ -11,6 +11,7 @@
   <key>CFBundleVersion</key><string>$(CURRENT_PROJECT_VERSION)</string>
   <key>LSMinimumSystemVersion</key><string>$(MACOSX_DEPLOYMENT_TARGET)</string>
   <key>LSUIElement</key><true/>
+  <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>NSHumanReadableCopyright</key><string>MIT License</string>
   <key>ClipSourceAppGroup</key><string>$(APP_GROUP_ID)</string>
   <key>CFBundleURLTypes</key>

@@ -23,6 +23,8 @@ targets:
     platform: macOS
     sources:
       - path: Sources/ClipSourceApp
+      - path: Xcode/AppIcon.icns
+        buildPhase: resources
     dependencies:
       - package: ClipSourceKit
         product: ClipCore

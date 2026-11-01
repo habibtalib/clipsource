@@ -16,6 +16,7 @@ BIN="$(swift build -c release --show-bin-path)"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN/ClipSource" "$APP/Contents/MacOS/ClipSource"
+cp Xcode/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 cp "$BIN/clipsrc" "$BIN/clipsource-mcp" "$OUT/"
 
 cat > "$APP/Contents/Info.plist" <<PLIST
@@ -32,6 +33,7 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <key>CFBundleVersion</key><string>${VERSION}</string>
   <key>LSMinimumSystemVersion</key><string>14.0</string>
   <key>LSUIElement</key><true/>
+  <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>NSHumanReadableCopyright</key><string>MIT License</string>
 </dict>
 </plist>
