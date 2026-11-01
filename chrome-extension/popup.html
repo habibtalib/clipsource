@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ClipSource</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <img src="icons/icon32.png" alt="" width="22" height="22">
+    <span class="brand">ClipSource</span>
+    <label class="site-toggle" title="Allow typing into this site">
+      <input type="checkbox" id="siteToggle">
+      <span>Enabled on this site</span>
+    </label>
+  </header>
+  <div id="siteNote" class="note" hidden></div>
+
+  <section id="hostMissing" class="panel" hidden>
+    <p><strong>The ClipSource helper is not installed.</strong> Run this once in Terminal, then reopen this popup:</p>
+    <div class="cmd">
+      <code id="installCmd"></code>
+      <button id="copyCmd" class="btn small">Copy</button>
+    </div>
+    <p class="muted" id="hostError"></p>
+  </section>
+
+  <section id="pickView">
+    <input id="search" type="search" placeholder="Search history" autocomplete="off" spellcheck="false">
+    <ol id="list" class="list" role="listbox" aria-label="Clipboard history"></ol>
+    <p id="empty" class="muted center" hidden>No entries.</p>
+    <footer class="hint">↑↓ select · Return types into the page · ⌘1–9</footer>
+  </section>
+
+  <section id="consentView" class="panel" hidden>
+    <h2 id="consentTitle"></h2>
+    <p class="muted" id="consentText"></p>
+    <div class="actions">
+      <button id="consentNo" class="btn">Not now</button>
+      <button id="consentYes" class="btn primary">Allow</button>
+    </div>
+  </section>
+
+  <section id="confirmView" class="panel" hidden>
+    <h2 id="confirmTitle"></h2>
+    <p class="muted">Each line is typed and then Enter is pressed, so every line runs as a command in the console.</p>
+    <pre id="confirmPreview" class="preview"></pre>
+    <div class="actions">
+      <button id="cancelBtn" class="btn">Cancel</button>
+      <button id="confirmBtn" class="btn primary"></button>
+    </div>
+  </section>
+
+  <section id="typingView" class="panel" hidden>
+    <h2>Typing…</h2>
+    <div class="bar"><div id="barFill"></div></div>
+    <p id="typingText" class="muted"></p>
+    <div class="actions">
+      <button id="stopBtn" class="btn primary">Stop</button>
+    </div>
+  </section>
+
+  <div id="message" class="message" hidden></div>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

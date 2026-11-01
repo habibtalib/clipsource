@@ -1,0 +1,13 @@
+# Supabase
+.branches
+.temp
+
+# dotenvx
+.env.keys
+.env.local
+.env.*.local
+
+# Edge Function secrets (only .env.example is tracked)
+functions/.env
+functions/.env.*
+!functions/.env.example

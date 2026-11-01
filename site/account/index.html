@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>ClipSource Account</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/site.css">
+  <script src="/vendor/supabase-js-2.45.4.umd.js" integrity="sha384-0w2KAL2YHP6wKOkUDzkCDGgVvfmHnj02DHeQ6XcHOgTfFsGyonKOpShMH1x6nk9o" defer></script>
+  <script type="module" src="/account/account.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap narrow">
+      <a class="brand" href="/"><img src="/assets/logo.svg" alt="" width="28" height="28"><span>ClipSource</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <a class="nav-wide" href="/#pricing">Pricing</a>
+        <a href="/app">Web app</a>
+        <button id="sign-out" class="ghost" type="button" hidden>Sign out</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap narrow account">
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+
+    <section id="view-settings" class="card" hidden>
+      <h1>No server configured</h1>
+      <p class="muted">This site has no ClipSource Cloud server set in <code>config.js</code>. To manage a self-hosted server, enter its Supabase project; it is kept in this browser only.</p>
+      <form id="settings-form">
+        <label>Project URL<input id="settings-url" type="url" required placeholder="https://abcd.supabase.co" autocomplete="off"></label>
+        <label>Anon key<input id="settings-key" type="text" required autocomplete="off" spellcheck="false"></label>
+        <button class="primary" type="submit">Save</button>
+      </form>
+    </section>
+
+    <section id="view-signin" class="card signin" hidden>
+      <h1>Sign in to ClipSource</h1>
+      <p class="muted">Use the same account as ClipSource on your Mac to see your plan, devices and billing.</p>
+      <div class="stack">
+        <button class="primary" type="button" data-provider="github">Sign in with GitHub</button>
+        <button class="secondary" type="button" data-provider="google">Sign in with Google</button>
+      </div>
+      <div id="dev-signin" hidden>
+        <p class="divider">Local server only</p>
+        <form id="dev-form">
+          <label>Email<input id="dev-email" type="email" required autocomplete="username"></label>
+          <label>Password<input id="dev-password" type="password" required autocomplete="current-password"></label>
+          <button class="secondary" type="submit">Sign in with email</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="view-account" hidden>
+      <div class="card">
+        <div class="account-head">
+          <div>
+            <h1>Your account</h1>
+            <p id="acct-email" class="muted"></p>
+          </div>
+          <span id="acct-plan" class="plan-badge"></span>
+        </div>
+        <dl class="kv">
+          <div><dt>Macs</dt><dd id="acct-devices"></dd></div>
+          <div><dt>Synced history</dt><dd id="acct-retention"></dd></div>
+          <div id="acct-sub-row" hidden><dt>Subscription</dt><dd id="acct-sub"></dd></div>
+        </dl>
+      </div>
+
+      <div id="card-upgrade" class="card" hidden>
+        <h2>Upgrade to Pro</h2>
+        <p class="muted">Unlimited Macs and 365 days of synced history. Cancel any time.</p>
+        <div class="upgrade-actions">
+          <button class="primary" type="button" data-interval="year">Yearly · $24</button>
+          <button class="secondary" type="button" data-interval="month">Monthly · $3</button>
+        </div>
+      </div>
+
+      <div id="card-billing" class="card" hidden>
+        <h2>Billing</h2>
+        <p class="muted">Change your plan, update your card or download invoices in the Stripe customer portal.</p>
+        <button id="billing-portal" class="secondary" type="button">Manage billing</button>
+      </div>
+
+      <div class="card">
+        <h2>Devices</h2>
+        <p class="hint">Device names are account details, visible to the ClipSource server. They are not end-to-end encrypted, unlike your clips. Web browsers do not count toward the Mac limit.</p>
+        <ul id="device-list" class="devices"></ul>
+        <p class="hint lost-note">Removing a device signs it out immediately. If a device was lost or stolen, also delete your synced data below and set a new sync passphrase on your Mac, since the lost device may still know the old one.</p>
+      </div>
+
+      <div class="card danger-zone">
+        <h2>Delete my synced data</h2>
+        <p class="muted">Removes every synced clip, your sync passphrase check and your device list from the server. Local history on your Macs is not touched. Your plan and billing stay as they are.</p>
+        <form id="delete-form">
+          <label>Type DELETE to confirm<input id="delete-confirm" type="text" autocomplete="off" spellcheck="false"></label>
+          <button id="delete-btn" class="danger" type="submit">Delete synced data</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap narrow">
+      <span>© ClipSource</span>
+      <nav aria-label="Footer">
+        <a href="/legal/privacy">Privacy</a>
+        <a href="/legal/terms">Terms</a>
+      </nav>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

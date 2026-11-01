@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>ClipSource</title>
+  <meta name="description" content="A macOS clipboard manager that tags every copy with the app, window and AI session it came from, synced end-to-end encrypted across your Macs and the web.">
+  <meta property="og:title" content="ClipSource: know where every copy came from">
+  <meta property="og:description" content="Clipboard history with the source on every entry, end-to-end encrypted sync across your Macs and the web.">
+  <meta name="theme-color" content="#1B2238">
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/assets/logo-128.png">
+  <link rel="stylesheet" href="/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/assets/logo.svg" alt="" width="28" height="28"><span>ClipSource</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <a class="nav-wide" href="#features">Features</a>
+        <a class="nav-wide" href="#pricing">Pricing</a>
+        <a href="/app">Web app</a>
+        <a class="nav-cta" href="/account">Account</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <h1>Know where every copy came from — <em>on every device</em></h1>
+        <p class="lede">ClipSource is a menu-bar clipboard manager for macOS. Every copy is tagged with the app, the window or chat, and the AI session that made it. Turn on ClipSource Cloud and the same history follows you to your other Macs and the web, end-to-end encrypted.</p>
+        <div class="hero-actions">
+          <a class="btn primary btn-lg" href="#download">Download for macOS</a>
+          <a class="btn secondary btn-lg" href="#pricing">See pricing</a>
+        </div>
+        <p class="hero-note">Free for 2 Macs plus the web. macOS 14 or later.</p>
+        <div class="demo">
+          <video src="/assets/demo.mp4" poster="/assets/demo-poster.webp" autoplay muted loop playsinline preload="metadata" aria-label="ClipSource demo: copies tagged with their source, the menu bar, widgets, CLI and MCP"></video>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Features</span>
+          <h2>The clipboard, with a memory for sources</h2>
+          <p>Three Claude Code sessions, a WhatsApp group, Slack and a browser all write to one clipboard. ClipSource tells them apart.</p>
+        </div>
+        <div class="grid">
+          <article class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg></div>
+            <h3>Source on every entry</h3>
+            <p>App, focused window or chat title, label, session ID and project folder, recorded at the moment of the copy.</p>
+          </article>
+          <article class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
+            <h3>⌥⌘V search panel</h3>
+            <p>Search the whole history, browse recent copies or group them by app. Copy again with Return or ⌘1–9.</p>
+          </article>
+          <article class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m7 9 3 3-3 3M13 15h4"/></svg></div>
+            <h3>CLI and MCP for AI agents</h3>
+            <p><code>clipsrc copy --label "Sam reply"</code> replaces <code>pbcopy</code>, and the MCP server lets agents copy with a label and search history.</p>
+          </article>
+          <article class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.5 6.2M3 12a9 9 0 0 1 15.5-6.2"/><path d="M21 4v5h-5M3 20v-5h5"/></svg></div>
+            <h3>Sync across devices</h3>
+            <p>Sign in with GitHub or Google. Your Macs share one history, and any phone or PC can read and send clips on the web.</p>
+          </article>
+          <article class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
+            <h3>End-to-end encrypted</h3>
+            <p>Clips are encrypted on your device with a key from your passphrase. The server stores ciphertext it cannot read.</p>
+          </article>
+          <article class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/></svg></div>
+            <h3>Private by default</h3>
+            <p>History stays in local SQLite until you turn sync on. Password-manager copies and excluded apps are never stored.</p>
+          </article>
+        </div>
+        <div class="section">
+          <div class="panels">
+            <img src="/assets/panel-light.webp" alt="ClipSource panel in light mode" width="460" height="580" loading="lazy">
+            <img src="/assets/panel-dark.webp" alt="ClipSource panel in dark mode" width="460" height="580" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="encryption">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">How end-to-end encryption works</span>
+          <h2>Your passphrase never leaves your devices</h2>
+        </div>
+        <div class="e2e">
+          <ol class="steps">
+            <li><div><h3>Choose a sync passphrase on your Mac</h3><p>A key is derived from it on the device (PBKDF2-SHA256, 600,000 rounds). The passphrase itself is never stored or sent.</p></div></li>
+            <li><div><h3>Each clip is sealed before upload</h3><p>Text and source details are encrypted with AES-256-GCM. Duplicates are matched by a keyed HMAC, not by content.</p></div></li>
+            <li><div><h3>Other devices unlock with the same passphrase</h3><p>Your other Macs and the web app derive the same key locally and decrypt in place.</p></div></li>
+          </ol>
+          <div class="server-sees">
+            <h3>What the server can see</h3>
+            <ul>
+              <li>Encrypted blobs, keyed hashes and timestamps</li>
+              <li>A random ID for the device that wrote each row</li>
+              <li>Your device list (names and type), shown on your account page</li>
+              <li>Your plan and billing status</li>
+            </ul>
+            <p class="cipher">payload: "oKGio6Slpqeoqaqr9iaNl19y/aVIqc1o1CsuwDFE7MU+oGKV25/zbMly/+F177fD…"</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Pricing</span>
+          <h2>Start free. Upgrade for more Macs and history.</h2>
+          <p>The Mac app and local history are free forever. Plans only cover ClipSource Cloud sync.</p>
+        </div>
+        <div class="pricing">
+          <article class="plan">
+            <h3>Free</h3>
+            <p class="price">$0</p>
+            <p class="muted small">No card needed</p>
+            <ul>
+              <li>Sync between 2 Macs</li>
+              <li>Web app on any device (does not count)</li>
+              <li>Synced history kept 7 days</li>
+              <li>End-to-end encrypted</li>
+              <li>Unlimited local history</li>
+            </ul>
+            <a class="btn secondary" href="#download">Download</a>
+          </article>
+          <article class="plan featured" id="pro">
+            <h3>Pro <span class="chip accent">Best value yearly</span></h3>
+            <p class="price">$3 <small>/ month</small></p>
+            <p class="muted small">or $24 / year</p>
+            <ul>
+              <li>Unlimited Macs</li>
+              <li>Web app on any device</li>
+              <li>Synced history kept 365 days</li>
+              <li>End-to-end encrypted</li>
+              <li>Cancel any time from your account</li>
+            </ul>
+            <a class="btn primary" href="/account?upgrade=1">Upgrade to Pro</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="download">
+      <div class="wrap">
+        <div class="download">
+          <img src="/assets/logo.svg" alt="" width="64" height="64" class="download-logo">
+          <h2>Get ClipSource for macOS</h2>
+          <p class="muted">macOS 14 or later. Free and open source under the MIT license.</p>
+          <div class="hero-actions">
+            <a class="btn primary btn-lg" href="https://github.com/habibtalib/clipsource/releases/latest">Download latest release</a>
+            <a class="btn secondary btn-lg" href="https://github.com/habibtalib/clipsource">View on GitHub</a>
+          </div>
+          <pre><code>git clone https://github.com/habibtalib/clipsource.git
+cd clipsource
+Scripts/bundle-app.sh --install</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="wrap">
+        <div class="section-head"><span class="eyebrow">FAQ</span><h2>Questions</h2></div>
+        <div class="faq">
+          <details><summary>Do I need an account to use ClipSource?</summary><p>No. The Mac app, local history, widgets, CLI and MCP server work without an account. You only sign in to turn on sync.</p></details>
+          <details><summary>Can ClipSource read my clips?</summary><p>No. Clips are encrypted on your devices with a key derived from your sync passphrase. The server stores only ciphertext, keyed hashes and timestamps.</p></details>
+          <details><summary>What happens if I forget my sync passphrase?</summary><p>Nobody can recover it, including us. Delete your synced data from the account page and set a new passphrase; your local history on each Mac is untouched.</p></details>
+          <details><summary>Does the web app count as a device?</summary><p>No. The Free plan includes 2 Macs, and the web app works on any number of browsers on top of that.</p></details>
+          <details><summary>What happens to my history if I downgrade?</summary><p>Your devices stay connected, synced history older than 7 days is removed, and you cannot add a third Mac until you remove one. Local history on each Mac is not affected.</p></details>
+          <details><summary>Can I run my own server?</summary><p>Yes. ClipSource is open source and the sync backend is a Supabase project. In the Mac app choose Settings → Sync → Advanced to use your own server; the web app asks for it when no server is configured.</p></details>
+          <details><summary>Is the Chrome extension included?</summary><p>Yes. The Chrome extension is free and works locally with the Mac app; it is not part of any plan.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>© ClipSource</span>
+      <nav aria-label="Footer">
+        <a href="/app">Web app</a>
+        <a href="/account">Account</a>
+        <a href="https://github.com/habibtalib/clipsource">GitHub</a>
+        <a href="/legal/privacy">Privacy</a>
+        <a href="/legal/terms">Terms</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

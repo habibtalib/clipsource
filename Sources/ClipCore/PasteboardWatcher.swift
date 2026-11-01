@@ -33,6 +33,11 @@ public final class PasteboardWatcher {
         timer = nil
     }
 
+    /// Treat the pasteboard's current contents as already seen, so a programmatic write is not recorded.
+    public func adoptCurrentChange() {
+        lastChangeCount = NSPasteboard.general.changeCount
+    }
+
     func tick() {
         let pasteboard = NSPasteboard.general
         guard pasteboard.changeCount != lastChangeCount else { return }

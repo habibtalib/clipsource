@@ -15,6 +15,6 @@ let package = Package(
         .executableTarget(name: "ClipSourceApp", dependencies: ["ClipCore"]),
         .executableTarget(name: "clipsrc", dependencies: ["ClipCore"]),
         .executableTarget(name: "clipsource-mcp", dependencies: ["ClipCore"]),
-        .testTarget(name: "ClipCoreTests", dependencies: ["ClipCore"]),
+        .testTarget(name: "ClipCoreTests", dependencies: ["ClipCore"], resources: [.copy("Fixtures")]),
     ]
 )

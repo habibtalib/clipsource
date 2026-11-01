@@ -1,0 +1,4 @@
+# Not served by the site (see vercel.json outputDirectory "site")
+site/dev-server.mjs
+site/app/crypto.test.mjs
+site/vendor/README.md

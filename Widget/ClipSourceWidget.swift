@@ -193,6 +193,7 @@ extension ClipOrigin {
         case .watch: return "hand.point.up.left"
         case .cli: return "terminal"
         case .mcp: return "sparkles"
+        case .web: return "globe"
         }
     }
 }

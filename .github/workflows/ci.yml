@@ -16,6 +16,8 @@ jobs:
         run: swift build
       - name: Test
         run: swift test
+      - name: Web crypto vector
+        run: node site/app/crypto.test.mjs
       - name: Bundle app
         run: Scripts/bundle-app.sh
       - name: Xcode build with widget (unsigned)

@@ -182,6 +182,8 @@ struct HistoryView: View {
                 Image(systemName: "exclamationmark.octagon.fill").foregroundStyle(.red).help(error)
             }
 
+            SyncStatusIcon(sync: model.sync)
+
             Menu {
                 SettingsLink { Text("Settings…") }
                 Button("Clear History…") { confirmClear = true }
@@ -230,6 +232,9 @@ struct EntryRow: View {
                             .padding(.vertical, 1)
                             .background(BrandIcons.accent.opacity(0.16), in: Capsule())
                             .lineLimit(1)
+                    }
+                    if let device = entry.device {
+                        DeviceChip(name: device)
                     }
                     if entry.origin != .watch {
                         Text(entry.origin.rawValue.uppercased())
@@ -325,6 +330,51 @@ struct EntryRow: View {
         .buttonStyle(.plain)
         .foregroundStyle(.secondary)
         .help(help)
+    }
+}
+
+/// Device an entry was synced from.
+struct DeviceChip: View {
+    let name: String
+
+    var body: some View {
+        Label(name, systemImage: name.hasPrefix("Web") ? "globe" : "laptopcomputer")
+            .labelStyle(.titleAndIcon)
+            .font(.system(size: 10, weight: .medium))
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 1)
+            .background(.quaternary, in: Capsule())
+            .lineLimit(1)
+            .help("Synced from \(name)")
+    }
+}
+
+/// Footer sync indicator; hidden while sync is off.
+struct SyncStatusIcon: View {
+    @ObservedObject var sync: SyncController
+
+    var body: some View {
+        switch sync.status {
+        case .off:
+            EmptyView()
+        case .locked:
+            icon("lock.icloud", help: "Sync is locked: enter your passphrase in Settings").foregroundStyle(.orange)
+        case .syncing:
+            icon("arrow.triangle.2.circlepath", help: "Syncing…").foregroundStyle(.secondary)
+        case .synced(let date):
+            TimelineView(.periodic(from: .now, by: 30)) { _ in
+                icon("icloud", help: "Synced " + date.formatted(.relative(presentation: .named, unitsStyle: .wide))
+                     + (sync.pendingCount > 0 ? ", \(sync.pendingCount) waiting" : ""))
+                    .foregroundStyle(.secondary)
+            }
+        case .error(let message):
+            icon("exclamationmark.icloud", help: "Sync error: \(message)").foregroundStyle(.red)
+        }
+    }
+
+    private func icon(_ symbol: String, help: String) -> some View {
+        Image(systemName: symbol).help(help)
     }
 }
 

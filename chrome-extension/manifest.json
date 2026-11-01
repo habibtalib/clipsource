@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "ClipSource",
+  "version": "0.3.0",
+  "description": "Type a ClipSource clipboard entry into a web console (Guacamole, PAM portals) as real keystrokes.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAygBePFtFKNMS28iZK6FFQfO5q7T0JCxqMp9Qe02GbsmKdtE3yQGnBb8+MtAysomGvhxJIQPlHjRU0d/DSZ9XYepKJtFEWadjoWif/fuFEscohSsNgrHJUkL8dyYB6uWbfqnK2G9r7a2oQqfG0Feuf9tFmISgT5d/Y/Wv/gcTtH4l/U4Uypro0T5QdCAgk+ORyWrNfi0vh2t/qouoNRriV3jReywMUW9Ifc0z4a7INMitMRiM/KpAnP29DDhA+9XUsbDGwagtwiseOUD4qGs6gqfHgeEv8jYMOQxcCMr4aBZGJdDgMsXLCxVWkpNJT9ix1XV3F8hhBeQPwlyoT6a40wIDAQAB",
+  "permissions": ["nativeMessaging", "debugger", "activeTab", "storage", "contextMenus", "scripting"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": {
+    "default_title": "ClipSource",
+    "default_popup": "popup.html",
+    "default_icon": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" }
+  },
+  "options_page": "options.html",
+  "icons": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "commands": {
+    "type-latest": {
+      "suggested_key": { "default": "Alt+Shift+V", "mac": "Alt+Shift+V" },
+      "description": "Type the latest ClipSource entry (press again to stop)"
+    },
+    "_execute_action": {
+      "suggested_key": { "default": "Alt+Shift+H", "mac": "Alt+Shift+H" }
+    }
+  }
+}

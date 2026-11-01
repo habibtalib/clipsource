@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ClipSource Privacy</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap narrow">
+      <a class="brand" href="/"><img src="/assets/logo.svg" alt="" width="28" height="28"><span>ClipSource</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="/app">Web app</a>
+        <a class="nav-cta" href="/account">Account</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap narrow legal">
+    <h1>Privacy policy</h1>
+    <p class="notice"><strong>Placeholder text, to be reviewed by counsel before launch.</strong> It describes how ClipSource Cloud is built today but is not a binding legal document yet.</p>
+    <p class="muted">Last updated: [DATE TO BE SET]</p>
+    <h2>Summary</h2>
+    <p>The ClipSource Mac app keeps your clipboard history on your Mac. Nothing leaves your Mac unless you turn on sync. When you do, your clips are end-to-end encrypted on your devices before upload, and we cannot read them.</p>
+    <h2>What we store when you use ClipSource Cloud</h2>
+    <ul>
+      <li><strong>Account:</strong> the email address and profile ID from the GitHub or Google sign-in you choose.</li>
+      <li><strong>Encrypted clips:</strong> ciphertext, a keyed hash used to avoid duplicates, timestamps, and a random ID for the device that wrote each row. The text, app, window title and label of each clip are inside the ciphertext.</li>
+      <li><strong>Passphrase check:</strong> a random salt and an encrypted known value, so your devices can verify your passphrase. Your passphrase is never sent.</li>
+      <li><strong>Devices:</strong> the name and type (Mac or web) of each device you connect, and when it was last seen. Device names are not end-to-end encrypted.</li>
+      <li><strong>Billing:</strong> your plan, subscription status and Stripe customer ID. Card details are handled by Stripe and never reach us.</li>
+    </ul>
+    <h2>Retention</h2>
+    <p>Synced clips are deleted automatically after 7 days on the Free plan and 365 days on Pro. You can delete all synced data at any time from your account page. [ACCOUNT DELETION AND BACKUP RETENTION PERIODS TO BE SET]</p>
+    <h2>Processors</h2>
+    <p>[TO BE COMPLETED] Supabase (database, authentication), Stripe (payments), Vercel (website hosting), GitHub and Google (sign-in).</p>
+    <h2>Contact</h2>
+    <p>[CONTACT ADDRESS TO BE SET]</p>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap narrow">
+      <span>© ClipSource</span>
+      <nav aria-label="Footer"><a href="/legal/privacy">Privacy</a><a href="/legal/terms">Terms</a></nav>
+    </div>
+  </footer>
+</body>
+</html>

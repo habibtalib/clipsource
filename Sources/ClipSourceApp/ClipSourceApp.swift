@@ -76,6 +76,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 switch url.host {
                 case "restore":
                     if let id = Int64(url.lastPathComponent) { AppModel.shared.restore(id: id) }
+                case "auth-callback":
+                    break  // handled by the sign-in session
                 default:
                     panel?.show()
                 }

@@ -2,7 +2,7 @@ import CryptoKit
 import Foundation
 
 public enum ClipSourceVersion {
-    public static let string = "0.2.0"
+    public static let string = "0.3.0"
 }
 
 /// How an entry reached the history.
@@ -13,6 +13,8 @@ public enum ClipOrigin: String, Codable, Sendable {
     case cli
     /// Copied through the MCP server.
     case mcp
+    /// Sent from the web viewer.
+    case web
 }
 
 /// Where a copy came from.
@@ -79,14 +81,17 @@ public struct ClipEntry: Codable, Identifiable, Equatable, Sendable {
     public var createdAt: Date
     public var origin: ClipOrigin
     public var source: ClipSourceInfo
+    /// Name of the device that made the copy when it arrived through sync; nil for this Mac.
+    public var device: String?
 
-    public init(id: Int64, text: String, hash: String, createdAt: Date, origin: ClipOrigin, source: ClipSourceInfo) {
+    public init(id: Int64, text: String, hash: String, createdAt: Date, origin: ClipOrigin, source: ClipSourceInfo, device: String? = nil) {
         self.id = id
         self.text = text
         self.hash = hash
         self.createdAt = createdAt
         self.origin = origin
         self.source = source
+        self.device = device
     }
 
     /// Single-line preview, whitespace collapsed.

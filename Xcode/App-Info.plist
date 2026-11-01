@@ -14,6 +14,8 @@
   <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>NSHumanReadableCopyright</key><string>MIT License</string>
   <key>ClipSourceAppGroup</key><string>$(APP_GROUP_ID)</string>
+  <key>ClipSourceSupabaseURL</key><string>$(CLIPSOURCE_SUPABASE_URL)</string>
+  <key>ClipSourceSupabaseAnonKey</key><string>$(CLIPSOURCE_SUPABASE_ANON_KEY)</string>
   <key>CFBundleURLTypes</key>
   <array>
     <dict>

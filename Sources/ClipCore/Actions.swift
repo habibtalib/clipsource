@@ -38,6 +38,7 @@ public enum ClipFormatter {
     public static func line(_ e: ClipEntry, previewLength: Int = 200) -> String {
         var source = e.source.originLine
         if let label = e.source.label { source = "[\(label)] " + source }
+        if let device = e.device { source += " (from \(device))" }
         return "#\(e.id) · \(dateFormatter.string(from: e.createdAt)) · \(e.origin.rawValue) · \(source)\n    \(e.preview(previewLength))"
     }
 
@@ -46,7 +47,8 @@ public enum ClipFormatter {
         let s = e.source
         let fields: [(String, String?)] = [("label", s.label), ("app", s.app), ("bundle", s.bundleId),
                                            ("window", s.windowTitle), ("session", s.session),
-                                           ("cwd", s.cwd), ("terminal", s.terminal)]
+                                           ("cwd", s.cwd), ("terminal", s.terminal),
+                                           ("device", e.device)]
         for (name, value) in fields {
             if let value { lines.append("\(name): \(value)") }
         }
