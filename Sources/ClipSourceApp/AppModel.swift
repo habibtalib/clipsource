@@ -2,6 +2,7 @@ import AppKit
 import ClipCore
 import ServiceManagement
 import SwiftUI
+import WidgetKit
 
 struct SourceGroup: Identifiable {
     let title: String
@@ -17,7 +18,17 @@ final class AppModel: ObservableObject {
     @Published private(set) var axTrusted = SourceResolver.isTrusted(prompt: false)
     @Published private(set) var errorMessage: String?
     @Published var query = "" { didSet { reload() } }
-    @Published var paused = false { didSet { watcher?.paused = paused } }
+    @Published var paused = false {
+        didSet {
+            watcher?.paused = paused
+            publishWidget()
+        }
+    }
+    /// Newest entry regardless of the search query; drives the menu-bar status.
+    @Published private(set) var latest: ClipEntry?
+
+    @AppStorage("menuBarShowsSource") var menuBarShowsSource = true
+    @AppStorage("widgetHidesContent") var widgetHidesContent = false { didSet { publishWidget() } }
 
     @AppStorage("excludedBundleIds") var excludedBundleIdsText = PrivacyPolicy.defaultExcludedBundleIds.joined(separator: "\n") {
         didSet { applyPolicy() }
@@ -82,9 +93,35 @@ final class AppModel: ObservableObject {
             entries = query.trimmingCharacters(in: .whitespaces).isEmpty
                 ? try store.recent(limit: 300)
                 : try store.search(query, limit: 300)
+            let newest = try store.recent(limit: 1).first
+            if newest != latest { latest = newest }
         } catch {
             errorMessage = "\(error)"
         }
+        publishWidget()
+    }
+
+    private var lastSnapshot: WidgetSnapshot?
+
+    /// Write the widget snapshot to the App Group and reload widget timelines when it changed.
+    func publishWidget() {
+        guard let store, let url = WidgetBridge.snapshotURL,
+              let recent = try? store.recent(limit: 6), let total = try? store.count() else { return }
+        let snapshot = WidgetSnapshot.make(entries: recent, total: total, paused: paused, hideContent: widgetHidesContent)
+        guard !snapshot.sameContent(as: lastSnapshot) else { return }
+        do {
+            try snapshot.write(to: url)
+            lastSnapshot = snapshot
+            WidgetCenter.shared.reloadAllTimelines()
+        } catch {
+            errorMessage = "Widget update failed: \(error.localizedDescription)"
+        }
+    }
+
+    func restore(id: Int64) {
+        guard let store else { return }
+        _ = try? ClipActions.restore(id: id, store: store)
+        reload()
     }
 
     func copy(_ entry: ClipEntry) {

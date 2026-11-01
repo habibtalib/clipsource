@@ -2,7 +2,7 @@ import CryptoKit
 import Foundation
 
 public enum ClipSourceVersion {
-    public static let string = "0.1.0"
+    public static let string = "0.2.0"
 }
 
 /// How an entry reached the history.

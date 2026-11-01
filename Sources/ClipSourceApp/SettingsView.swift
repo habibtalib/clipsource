@@ -18,6 +18,15 @@ struct SettingsView: View {
                 Toggle("Launch at login", isOn: Binding(get: { model.launchAtLogin }, set: { model.launchAtLogin = $0 }))
             }
 
+            Section("Status") {
+                Toggle("Show latest source in the menu bar", isOn: $model.menuBarShowsSource)
+                Toggle("Hide clipboard text in widgets", isOn: $model.widgetHidesContent)
+                if WidgetBridge.appGroupId == nil {
+                    Text("Widgets need the Xcode build (Scripts/build-widgets.sh).")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+            }
+
             Section {
                 TextEditor(text: $model.excludedBundleIdsText)
                     .font(.system(.body, design: .monospaced))

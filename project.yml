@@ -1,0 +1,63 @@
+# XcodeGen spec for the signed build with widgets. Generate with Scripts/build-widgets.sh.
+# Requires CLIPSOURCE_TEAM=<your Apple Developer team ID> (a free Personal Team works).
+name: ClipSource
+options:
+  bundleIdPrefix: dev.habibtalib
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.2.0"
+    CURRENT_PROJECT_VERSION: "2"
+    DEVELOPMENT_TEAM: ${CLIPSOURCE_TEAM}
+    CODE_SIGN_STYLE: Automatic
+    APP_GROUP_ID: "$(DEVELOPMENT_TEAM).dev.habibtalib.clipsource"
+packages:
+  ClipSourceKit:
+    path: .
+targets:
+  ClipSource:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/ClipSourceApp
+    dependencies:
+      - package: ClipSourceKit
+        product: ClipCore
+      - target: ClipSourceWidget
+        embed: true
+        codeSign: true
+    settings:
+      base:
+        PRODUCT_NAME: ClipSource
+        PRODUCT_BUNDLE_IDENTIFIER: dev.habibtalib.clipsource
+        INFOPLIST_FILE: Xcode/App-Info.plist
+        CODE_SIGN_ENTITLEMENTS: Xcode/ClipSource.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+  ClipSourceWidget:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: Widget
+    dependencies:
+      - package: ClipSourceKit
+        product: ClipCore
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+    settings:
+      base:
+        PRODUCT_NAME: ClipSourceWidget
+        PRODUCT_BUNDLE_IDENTIFIER: dev.habibtalib.clipsource.widget
+        INFOPLIST_FILE: Xcode/Widget-Info.plist
+        CODE_SIGN_ENTITLEMENTS: Xcode/ClipSourceWidget.entitlements
+        ENABLE_APP_SANDBOX: YES
+        ENABLE_HARDENED_RUNTIME: YES
+        SKIP_INSTALL: YES
+schemes:
+  ClipSource:
+    build:
+      targets:
+        ClipSource: all
+        ClipSourceWidget: all

@@ -18,3 +18,9 @@ jobs:
         run: swift test
       - name: Bundle app
         run: Scripts/bundle-app.sh
+      - name: Xcode build with widget (unsigned)
+        run: |
+          brew install xcodegen
+          CLIPSOURCE_TEAM="" xcodegen generate --quiet
+          xcodebuild -project ClipSource.xcodeproj -scheme ClipSource -configuration Release \
+            -derivedDataPath build/xcode CODE_SIGNING_ALLOWED=NO build
