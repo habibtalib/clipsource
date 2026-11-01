@@ -1,0 +1,11 @@
+.DS_Store
+/.build/
+/build/
+/.swiftpm/
+/Packages/
+*.xcodeproj/
+xcuserdata/
+DerivedData/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
