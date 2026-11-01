@@ -144,6 +144,7 @@ struct HistoryView: View {
                  shortcut: shortcut,
                  isSelected: model.selectedId == entry.id,
                  isCurrent: model.currentEntryId == entry.id,
+                 details: model.details[entry.id],
                  onCopy: { pick { model.copy(entry) } },
                  onDelete: { model.delete(entry) })
             .id(entry.id)
@@ -209,6 +210,7 @@ struct EntryRow: View {
     let shortcut: Int?
     let isSelected: Bool
     let isCurrent: Bool
+    var details: SourceDetails? = nil
     let onCopy: () -> Void
     let onDelete: () -> Void
     @State private var hovering = false
@@ -275,7 +277,9 @@ struct EntryRow: View {
                     .lineLimit(2)
                     .foregroundStyle(.primary)
 
-                if let context = contextLine {
+                if let details, details.sessionTitle != nil || details.repo != nil {
+                    SourceChips(details: details, compact: true)
+                } else if let context = contextLine {
                     Text(context)
                         .font(.system(size: 11))
                         .foregroundStyle(.secondary)
