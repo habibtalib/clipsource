@@ -34,6 +34,27 @@ final class AppModel: ObservableObject {
     @Published var selectedId: Int64?
 
     @AppStorage("menuBarShowsSource") var menuBarShowsSource = true
+    /// Show the animated "Copied from …" toast after each ⌘C.
+    @AppStorage("showCopyHUD") var showCopyHUD = true
+    /// Hold ⌘V to choose which entry to paste (needs Accessibility).
+    @AppStorage("holdToChoosePaste") var holdToChoosePaste = true { didSet { onPasteSwitcherSettingChanged?() } }
+    var onPasteSwitcherSettingChanged: (() -> Void)?
+    var pasteSwitcher: PasteSwitcher?
+
+    /// Starts or stops the hold-⌘V switcher to match the setting and the Accessibility grant.
+    func updatePasteSwitcher() {
+        guard let pasteSwitcher else { return }
+        if holdToChoosePaste && AXIsProcessTrusted() {
+            if !pasteSwitcher.isRunning { pasteSwitcher.start() }
+        } else if pasteSwitcher.isRunning {
+            pasteSwitcher.stop()
+        }
+    }
+
+    /// Session, repo and chat for each entry, resolved in the background.
+    @Published private(set) var details: [Int64: SourceDetails] = [:]
+    private var detailsInFlight: Set<Int64> = []
+    private var detailsKeys: [Int64: ClipSourceInfo] = [:]
     @AppStorage("widgetHidesContent") var widgetHidesContent = false { didSet { publishWidget() } }
 
     @AppStorage("excludedBundleIds") var excludedBundleIdsText = PrivacyPolicy.defaultExcludedBundleIds.joined(separator: "\n") {
@@ -65,6 +86,7 @@ final class AppModel: ObservableObject {
             let store = try ClipStore()
             self.store = store
             let watcher = PasteboardWatcher(store: store, policy: policy)
+            watcher.onRecord = { [weak self] entry in self?.didCopy(entry) }
             watcher.onChange = { [weak self] in
                 self?.reload()
                 self?.sync.schedulePush()
@@ -80,6 +102,8 @@ final class AppModel: ObservableObject {
             didPromptAX = true
             requestAccessibility()
         }
+        // Read Claude Code transcript tails once in the background so the first ⌘C resolves quickly.
+        DispatchQueue.global(qos: .utility).async { _ = SessionIndex.shared.session(matchingWindowTitle: "warm-up") }
         prune()
         pruneTimer = Timer.scheduledTimer(withTimeInterval: 3600, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.prune() }
@@ -100,6 +124,7 @@ final class AppModel: ObservableObject {
 
     func reload() {
         axTrusted = AXIsProcessTrusted()
+        updatePasteSwitcher()
         guard let store else { return }
         do {
             entries = query.trimmingCharacters(in: .whitespaces).isEmpty
@@ -111,6 +136,7 @@ final class AppModel: ObservableObject {
             let onClipboard = NSPasteboard.general.string(forType: .string).map(ClipHash.of)
             currentEntryId = onClipboard.flatMap { hash in try? store.entry(hash: hash) }?.id
             if let selectedId, !entries.contains(where: { $0.id == selectedId }) { self.selectedId = nil }
+            loadDetails(for: Array(entries.prefix(60)))
         } catch {
             errorMessage = "\(error)"
         }
@@ -132,6 +158,59 @@ final class AppModel: ObservableObject {
         } catch {
             errorMessage = "Widget update failed: \(error.localizedDescription)"
         }
+    }
+
+    // MARK: Source details (session, repo, chat)
+
+    /// A manual copy: show the toast, find the session and repo off the main thread, then save them.
+    func didCopy(_ entry: ClipEntry) {
+        if showCopyHUD { CopyHUD.shared.show(entry) }
+        let started = Date()
+        DispatchQueue.global(qos: .userInitiated).async {
+            let enriched = SourceEnricher.enrich(entry.source)
+            let details = SourceEnricher.details(for: enriched ?? entry.source)
+            // Keep the loading state on screen long enough to read as an animation.
+            let delay = max(0, 0.35 - Date().timeIntervalSince(started))
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                MainActor.assumeIsolated {
+                    let model = AppModel.shared
+                    if let enriched {
+                        try? model.store?.updateContext(id: entry.id, session: enriched.session, cwd: enriched.cwd)
+                    }
+                    model.details[entry.id] = details
+                    model.detailsKeys[entry.id] = enriched ?? entry.source
+                    if model.showCopyHUD { CopyHUD.shared.resolve(entryId: entry.id, details: details) }
+                    model.reload()
+                }
+            }
+        }
+    }
+
+    /// Resolve details for entries not seen yet (or whose source changed).
+    func loadDetails(for entries: [ClipEntry]) {
+        let missing = entries.filter { detailsKeys[$0.id] != $0.source && !detailsInFlight.contains($0.id) }
+        guard !missing.isEmpty else { return }
+        missing.forEach { detailsInFlight.insert($0.id) }
+        DispatchQueue.global(qos: .utility).async {
+            let resolved = missing.map { ($0.id, $0.source, SourceEnricher.details(for: $0.source)) }
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated {
+                    let model = AppModel.shared
+                    for (id, source, details) in resolved {
+                        model.details[id] = details
+                        model.detailsKeys[id] = source
+                        model.detailsInFlight.remove(id)
+                    }
+                }
+            }
+        }
+    }
+
+    /// Newest entries for the hold-⌘V switcher.
+    func switcherEntries(limit: Int = 9) -> [ClipEntry] {
+        let recent = (try? store?.recent(limit: limit)) ?? []
+        loadDetails(for: recent)
+        return recent
     }
 
     func restore(id: Int64) {

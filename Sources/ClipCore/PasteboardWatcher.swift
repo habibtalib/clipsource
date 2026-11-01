@@ -10,6 +10,8 @@ public final class PasteboardWatcher {
     public var paused = false
     /// Called on every pasteboard change, whether or not an entry was recorded.
     public var onChange: (() -> Void)?
+    /// Called with each entry recorded from a manual copy (⌘C), before `onChange`.
+    public var onRecord: ((ClipEntry) -> Void)?
 
     private let store: ClipStore
     private var lastChangeCount: Int
@@ -54,6 +56,8 @@ public final class PasteboardWatcher {
            Date().timeIntervalSince(existing.createdAt) < Self.mergeWindow {
             return
         }
-        _ = try? store.record(text: text, origin: .watch, source: source)
+        if let entry = try? store.record(text: text, origin: .watch, source: source) {
+            onRecord?(entry)
+        }
     }
 }

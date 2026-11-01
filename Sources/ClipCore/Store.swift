@@ -126,6 +126,11 @@ public final class ClipStore: @unchecked Sendable {
         return try entry(id: sqlite3_last_insert_rowid(db))!
     }
 
+    /// Add the session and working folder found after the copy was recorded.
+    public func updateContext(id: Int64, session: String?, cwd: String?) throws {
+        try run("UPDATE entries SET session=?, cwd=?, dirty=1 WHERE id=?", [session, cwd, id])
+    }
+
     /// Move an entry to the top, keeping its source (used when re-copying).
     public func touch(id: Int64, at date: Date = Date()) throws {
         try run("UPDATE entries SET created_at=?, dirty=1 WHERE id=?", [date.timeIntervalSince1970, id])

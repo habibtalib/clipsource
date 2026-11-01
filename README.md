@@ -57,6 +57,9 @@ Say you have three Claude Code sessions, a WhatsApp group, Slack and a browser a
 |---|---|
 | 🏷️ **Source on every entry** | App, bundle ID, focused window or chat title, label, session ID, working directory, terminal |
 | 📍 **Live menu-bar status** | The menu bar shows where the latest copy came from, such as `Reply to Sam` or `WhatsApp` |
+| 🔁 **Hold ⌘V to choose** | Like ⌘Tab for the clipboard. Tap ⌘V to paste as usual; hold it and the switcher opens. Press V or ↓ to move down, ⇧V or ↑ to move up, 1–9 to jump, and release ⌘ to paste the selected entry. Esc cancels. |
+| ✨ **Copy toast** | Each ⌘C shows a small animated card: a spinner while the source is looked up, then a check with the app, the Claude Code session or chat, and the repo and branch. |
+| 🧭 **Session and repo** | Copies from a terminal whose title is a Claude Code session are linked to that session (from its transcript), its folder and its git repo and branch. CLI and MCP copies get the same through their session ID. |
 | ⌨️ **⌥⌘V panel** | Floating search over the whole history, *Recent* or *By app*. Keyboard: ↑↓, Return to copy, ⌘1–9 for the top entries, Esc to close. |
 | 🧩 **Desktop widgets** | *Latest Copy* and *Recent Copies*, updated on every clipboard change. Click a row to copy it again. |
 | 🖥️ **`clipsrc` CLI** | A drop-in for `pbcopy` that adds a tag: `echo hi \| clipsrc copy --label "Sam reply"` |
@@ -115,9 +118,13 @@ flowchart LR
 
 | Copy made by | What gets recorded |
 |---|---|
-| You (⌘C anywhere) | Frontmost app, bundle ID, focused window title |
+| You (⌘C anywhere) | Frontmost app, bundle ID, focused window title. In a terminal, also the Claude Code session whose title matches the window, and its folder. |
 | `clipsrc copy` | The above, plus `--label`, the current folder, `$TERM_PROGRAM` and the session ID |
 | MCP `clipboard_copy` | Same as `clipsrc`. The folder is the agent's project directory. |
+
+Sessions are found by reading the end of each Claude Code transcript (`~/.claude/projects/*/<session>.jsonl`, plus `$CLAUDE_CONFIG_DIR` and `~/.claude-profiles/*`), only for sessions active in the last 3 days. The transcripts are only read, never sent anywhere; the repo name and branch come from the folder's `.git`.
+
+The hold-⌘V switcher uses a keyboard event tap, so it needs the same Accessibility permission as window titles. Turn it, or the copy toast, off in *Settings → Status*.
 
 The session ID is taken from `$CLIPSOURCE_SESSION`, then `$CLAUDE_SESSION_ID`, then `$CLAUDE_CODE_SESSION_ID`. The CLI and MCP server write the entry before setting the clipboard, and the watcher skips content recorded in the last 3 s, so each copy is stored once with the fullest source.
 
