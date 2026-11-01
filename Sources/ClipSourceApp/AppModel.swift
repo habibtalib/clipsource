@@ -44,6 +44,7 @@ final class AppModel: ObservableObject {
     @AppStorage("didPromptAX") private var didPromptAX = false
 
     private(set) var store: ClipStore?
+    let sync = SyncController()
     private var watcher: PasteboardWatcher?
     private var pruneTimer: Timer?
 
@@ -64,9 +65,13 @@ final class AppModel: ObservableObject {
             let store = try ClipStore()
             self.store = store
             let watcher = PasteboardWatcher(store: store, policy: policy)
-            watcher.onChange = { [weak self] in self?.reload() }
+            watcher.onChange = { [weak self] in
+                self?.reload()
+                self?.sync.schedulePush()
+            }
             watcher.start()
             self.watcher = watcher
+            sync.start(store: store, watcher: watcher, reload: { [weak self] in self?.reload() })
         } catch {
             errorMessage = "Cannot open history: \(error)"
             return
@@ -133,12 +138,14 @@ final class AppModel: ObservableObject {
         guard let store else { return }
         _ = try? ClipActions.restore(id: id, store: store)
         reload()
+        sync.schedulePush()
     }
 
     func copy(_ entry: ClipEntry) {
         guard let store else { return }
         _ = try? ClipActions.restore(id: entry.id, store: store)
         reload()
+        sync.schedulePush()
     }
 
     /// Move the keyboard selection up (-1) or down (+1).
@@ -167,15 +174,18 @@ final class AppModel: ObservableObject {
     func delete(_ entry: ClipEntry) {
         try? store?.delete(id: entry.id)
         reload()
+        sync.schedulePush()
     }
 
     func clearAll() {
         try? store?.clear()
         reload()
+        sync.schedulePush()
     }
 
     func prune() {
         _ = try? store?.prune(maxAge: TimeInterval(max(retentionDays, 1)) * 86400, maxCount: max(maxEntries, 100))
+        sync.pruneRemote()  // synced history follows the plan's retention, not this setting
         reload()
     }
 

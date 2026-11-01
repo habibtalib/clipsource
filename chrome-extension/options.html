@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ClipSource options</title>
+  <link rel="stylesheet" href="popup.css">
+  <style>
+    body { width: auto; max-width: 560px; max-height: none; margin: 24px auto; padding: 0 16px; }
+    h1 { font-size: 18px; display: flex; align-items: center; gap: 8px; }
+    fieldset { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin: 0 0 16px; }
+    legend { font-weight: 700; padding: 0 4px; }
+    .field { display: grid; grid-template-columns: 1fr 110px; align-items: center; gap: 8px; margin: 6px 0; }
+    input[type=number], input[type=text] {
+      padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px;
+      background: var(--surface); color: var(--ink); font: inherit;
+    }
+    #sites { list-style: none; padding: 0; margin: 8px 0; }
+    #sites li { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--line); }
+    .add { display: flex; gap: 8px; }
+    .add input { flex: 1; }
+    #saved { margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <h1><img src="icons/icon32.png" alt="" width="24" height="24"> ClipSource options</h1>
+
+  <fieldset>
+    <legend>Typing speed</legend>
+    <label class="field">Delay between characters (ms) <input id="charDelay" type="number" min="0" max="1000"></label>
+    <label class="field">Delay after each Enter (ms) <input id="enterDelay" type="number" min="0" max="5000"></label>
+    <p class="muted">Raise these if the remote console drops characters.</p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Confirmation</legend>
+    <label class="field">Confirm texts longer than (characters) <input id="confirmChars" type="number" min="1" max="20000"></label>
+    <p class="muted">Texts with more than one line always need confirmation, because each line runs as a command.</p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Allowed sites</legend>
+    <p class="muted">ClipSource types only on hosts listed here. On a page whose path contains <code>/xtam/</code> or <code>/guacamole/</code>, the popup asks whether to allow its host. Add other consoles by host (with port when not 443).</p>
+    <ul id="sites"></ul>
+    <form class="add" id="addForm">
+      <input id="newSite" type="text" placeholder="console.example.com" autocomplete="off" spellcheck="false">
+      <button class="btn" type="submit">Add</button>
+    </form>
+  </fieldset>
+
+  <button id="save" class="btn primary">Save</button><span id="saved" class="muted"></span>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

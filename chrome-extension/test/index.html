@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Guacamole keyboard test console</title>
+  <style>
+    body { font: 13px/1.4 ui-monospace, Menlo, monospace; margin: 16px; }
+    .display { width: 480px; height: 120px; border: 1px solid #888; outline: none; }
+    .display:focus { border-color: #FF8A4C; }
+  </style>
+</head>
+<body>
+  <!-- Stand-in for a Guacamole HTML5 session: a focusable display, Guacamole.Keyboard on the
+       document, paste blocked. Each received key press is logged as a hex keysym. -->
+  <div class="display" tabindex="0"></div>
+  <pre id="log"></pre>
+  <script type="module">
+    import Guacamole from "./guacamole-common.js";
+    window.keysyms = [];
+    const log = document.getElementById("log");
+    const keyboard = new Guacamole.Keyboard(document);
+    keyboard.onkeydown = (keysym) => {
+      window.keysyms.push(keysym);
+      log.textContent += "0x" + keysym.toString(16).toUpperCase() + "\n";
+      return true;
+    };
+    // Guacamole ignores keyup events entirely unless onkeyup is set (as the real client does).
+    keyboard.onkeyup = (keysym) => { window.released = (window.released || 0) + 1; };
+    document.addEventListener("paste", (e) => { e.preventDefault(); window.pasteBlocked = true; }, true);
+    window.guacReady = true;
+  </script>
+</body>
+</html>

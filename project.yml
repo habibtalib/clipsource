@@ -1,5 +1,6 @@
 # XcodeGen spec for the signed build with widgets. Generate with Scripts/build-widgets.sh.
 # Requires CLIPSOURCE_TEAM=<your Apple Developer team ID> (a free Personal Team works).
+# Optional CLIPSOURCE_SUPABASE_URL / CLIPSOURCE_SUPABASE_ANON_KEY bake a default sync server into the app.
 name: ClipSource
 options:
   bundleIdPrefix: dev.habibtalib
@@ -9,11 +10,13 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    MARKETING_VERSION: "0.2.0"
-    CURRENT_PROJECT_VERSION: "2"
+    MARKETING_VERSION: "0.3.0"
+    CURRENT_PROJECT_VERSION: "3"
     DEVELOPMENT_TEAM: ${CLIPSOURCE_TEAM}
     CODE_SIGN_STYLE: Automatic
     APP_GROUP_ID: "$(DEVELOPMENT_TEAM).dev.habibtalib.clipsource"
+    CLIPSOURCE_SUPABASE_URL: ${CLIPSOURCE_SUPABASE_URL}
+    CLIPSOURCE_SUPABASE_ANON_KEY: ${CLIPSOURCE_SUPABASE_ANON_KEY}
 packages:
   ClipSourceKit:
     path: .

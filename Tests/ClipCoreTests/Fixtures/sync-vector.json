@@ -1,0 +1,12 @@
+{
+  "check" : "BwcHBwcHBwcHBwcH+G6bvHchdobzuCWHs1EA6v8tPGS3vjSJBGVICboyqiA1pIOfk9aVsg==",
+  "hash" : "b7847876d91c6ab42fe187a96132ce860a0833b2dbb1822e82324057ad320a4b",
+  "iterations" : 1000,
+  "master" : "ppsXnjrdPB4KryJ6DrOqKqhkWrhv7PbKAMF1Eml8cZ4=",
+  "nonce" : "oKGio6Slpqeoqaqr",
+  "passphrase" : "correct horse battery staple",
+  "payload" : "oKGio6Slpqeoqaqr9iaNl19y/aVIqc1o1CsuwDFE7MU+oGKV25/zbMly/+F177fD7XxOOOyyf+yXAhsje7p0FyXMW+YzgSftAq0co3rfsQDWGmmPe1Yg99PBzE8H5W3UXp4nujnbuhusVdkp/R5D7/mvdQqYdWq1Msgzcm8RGXuDFL3rue2D7nQnPqpIy5+S8pb4ztQeXinX2G0SH3VqXvGeQaKBJ5llBwM/NWev/CdGYl+cYRKVDww3Z4FrHi+9ZIt96z1MNlr1HugNzy1Reou7BHXage/O463D1FZ2/2k+aGvPDSt066PD8ANLpcFw/qwfyZHQnryqvHtJkGSnTjIgrbWI/yOSBwEd3zGw1AWBubHXvhlpqvfm0R+vtFRiXu/K0rz6+bv2fWHOt6dBuc9C/JcNJXMmQdnQqi5oDdZJHpHTA724OA==",
+  "payloadJSON" : "{\"createdAt\":1793520000.25,\"deviceId\":\"11111111-2222-3333-4444-555555555555\",\"deviceName\":\"Test Mac\",\"origin\":\"cli\",\"source\":{\"app\":\"iTerm2\",\"bundleId\":\"com.googlecode.iterm2\",\"cwd\":\"/Users/me/my-app\",\"label\":\"Sam reply\",\"windowTitle\":\"claude — my-app\"},\"text\":\"Draft reply for the team ✅\",\"v\":1}",
+  "salt" : "AAECAwQFBgcICQoLDA0ODw==",
+  "text" : "Draft reply for the team ✅"
+}

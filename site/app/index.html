@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>ClipSource Web</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/site.css">
+  <link rel="stylesheet" href="/app/styles.css">
+  <script src="/vendor/supabase-js-2.45.4.umd.js" integrity="sha384-0w2KAL2YHP6wKOkUDzkCDGgVvfmHnj02DHeQ6XcHOgTfFsGyonKOpShMH1x6nk9o" defer></script>
+  <script type="module" src="/app/app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap narrow">
+      <a class="brand" href="/"><img src="/assets/logo.svg" alt="" width="28" height="28"><span>ClipSource</span></a>
+      <nav class="site-nav" aria-label="Main">
+        <button id="settings-open" class="link" type="button" hidden>Server</button>
+        <a href="/account">Account</a>
+        <button id="sign-out" class="ghost" type="button" hidden>Sign out</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap narrow">
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+
+    <section id="view-settings" class="card" hidden>
+      <h1>Connect to your sync server</h1>
+      <p class="muted">This site has no ClipSource Cloud server configured. Enter the Supabase project your Macs sync with; it is kept in this browser only.</p>
+      <form id="settings-form">
+        <label>Project URL<input id="settings-url" type="url" required placeholder="https://abcd.supabase.co" autocomplete="off"></label>
+        <label>Anon key<input id="settings-key" type="text" required autocomplete="off" spellcheck="false"></label>
+        <p class="hint">Only *.supabase.co projects are allowed by this site's security policy.</p>
+        <button class="primary" type="submit">Save</button>
+      </form>
+    </section>
+
+    <section id="view-signin" class="card" hidden>
+      <h1>Your clipboard, on every device</h1>
+      <p class="muted">Clips are end-to-end encrypted. The server never sees their text.</p>
+      <div class="stack">
+        <button class="primary" type="button" data-provider="github">Sign in with GitHub</button>
+        <button class="secondary" type="button" data-provider="google">Sign in with Google</button>
+      </div>
+      <div id="dev-signin" hidden>
+        <p class="divider">Local server only</p>
+        <form id="dev-form">
+          <label>Email<input id="dev-email" type="email" required autocomplete="username"></label>
+          <label>Password<input id="dev-password" type="password" required autocomplete="current-password"></label>
+          <button class="secondary" type="submit">Sign in with email</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="view-nokey" class="card" hidden>
+      <h1>Set up sync on your Mac first</h1>
+      <p class="muted">Turn on sync in ClipSource on a Mac and choose a passphrase. Then reload this page.</p>
+    </section>
+
+    <section id="view-unlock" class="card" hidden>
+      <h1>Enter your sync passphrase</h1>
+      <p class="muted">The same passphrase you set on your Mac. It never leaves this browser.</p>
+      <form id="unlock-form">
+        <label>Passphrase<input id="unlock-pass" type="password" required autocomplete="current-password"></label>
+        <label class="check"><input id="unlock-remember" type="checkbox"> Remember on this tab</label>
+        <button id="unlock-btn" class="primary" type="submit">Unlock</button>
+      </form>
+    </section>
+
+    <section id="view-clips" hidden>
+      <form id="send-form" class="card send">
+        <label for="send-text">Send to my Macs</label>
+        <textarea id="send-text" rows="3" placeholder="Type or paste text…"></textarea>
+        <button id="send-btn" class="primary" type="submit">Send</button>
+      </form>
+      <input id="search" class="search" type="search" placeholder="Search clips" aria-label="Search clips">
+      <p id="list-note" class="muted small"></p>
+      <ul id="list" class="list"></ul>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
