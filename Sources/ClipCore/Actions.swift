@@ -64,6 +64,21 @@ public enum ClipFormatter {
         return (try? encoder.encode(value)).flatMap { String(data: $0, encoding: .utf8) } ?? "null"
     }
 
+    /// Compact age: "now", "5m", "3h", "Yesterday", then "12 Oct". Never future-relative.
+    public static func shortAge(_ date: Date, now: Date = Date(), calendar: Calendar = .current) -> String {
+        let seconds = now.timeIntervalSince(date)
+        if seconds < 60 { return "now" }
+        if seconds < 3600 { return "\(Int(seconds / 60))m" }
+        if calendar.isDate(date, inSameDayAs: now) { return "\(Int(seconds / 3600))h" }
+        if let yesterday = calendar.date(byAdding: .day, value: -1, to: now), calendar.isDate(date, inSameDayAs: yesterday) {
+            return "Yesterday"
+        }
+        let f = DateFormatter()
+        f.calendar = calendar
+        f.setLocalizedDateFormatFromTemplate(calendar.isDate(date, equalTo: now, toGranularity: .year) ? "d MMM" : "d MMM yyyy")
+        return f.string(from: date)
+    }
+
     /// Parse "30m", "2h", "7d" or an ISO 8601 date.
     public static func parseSince(_ value: String?, now: Date = Date()) -> Date? {
         guard let value = value?.trimmingCharacters(in: .whitespaces), !value.isEmpty else { return nil }

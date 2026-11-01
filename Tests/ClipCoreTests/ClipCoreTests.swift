@@ -127,6 +127,24 @@ final class FormatterTests: XCTestCase {
         XCTAssertEqual(ClipSourceInfo().title, "Unknown source")
     }
 
+    func testCleanWindowTitle() {
+        XCTAssertEqual(ClipSourceInfo(app: "Google Chrome", windowTitle: "(2) WhatsApp - Google Chrome - Habib").cleanWindowTitle, "(2) WhatsApp")
+        XCTAssertEqual(ClipSourceInfo(app: "Safari", windowTitle: "Release notes — Safari").cleanWindowTitle, "Release notes")
+        XCTAssertEqual(ClipSourceInfo(app: "iTerm2", windowTitle: "claude — my-app").cleanWindowTitle, "claude — my-app")
+        XCTAssertNil(ClipSourceInfo(app: "Notes", windowTitle: "Notes").cleanWindowTitle)
+        XCTAssertNil(ClipSourceInfo(app: "Notes", windowTitle: "  ").cleanWindowTitle)
+    }
+
+    func testShortAge() {
+        let cal = Calendar(identifier: .gregorian)
+        let now = cal.date(from: DateComponents(year: 2026, month: 11, day: 1, hour: 15))!
+        XCTAssertEqual(ClipFormatter.shortAge(now.addingTimeInterval(5), now: now, calendar: cal), "now", "clock skew never reads as future")
+        XCTAssertEqual(ClipFormatter.shortAge(now.addingTimeInterval(-30), now: now, calendar: cal), "now")
+        XCTAssertEqual(ClipFormatter.shortAge(now.addingTimeInterval(-300), now: now, calendar: cal), "5m")
+        XCTAssertEqual(ClipFormatter.shortAge(now.addingTimeInterval(-3 * 3600), now: now, calendar: cal), "3h")
+        XCTAssertEqual(ClipFormatter.shortAge(now.addingTimeInterval(-20 * 3600), now: now, calendar: cal), "Yesterday")
+    }
+
     func testPreviewCollapsesWhitespace() {
         let e = ClipEntry(id: 1, text: "a\n\n b   c", hash: "", createdAt: Date(), origin: .watch, source: ClipSourceInfo())
         XCTAssertEqual(e.preview(), "a b c")

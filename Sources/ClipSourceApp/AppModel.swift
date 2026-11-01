@@ -6,6 +6,7 @@ import WidgetKit
 
 struct SourceGroup: Identifiable {
     let title: String
+    let bundleId: String?
     let entries: [ClipEntry]
     var id: String { title }
 }
@@ -26,6 +27,11 @@ final class AppModel: ObservableObject {
     }
     /// Newest entry regardless of the search query; drives the menu-bar status.
     @Published private(set) var latest: ClipEntry?
+    @Published private(set) var total = 0
+    /// Entry whose text is on the clipboard right now.
+    @Published private(set) var currentEntryId: Int64?
+    /// Keyboard selection in the history list.
+    @Published var selectedId: Int64?
 
     @AppStorage("menuBarShowsSource") var menuBarShowsSource = true
     @AppStorage("widgetHidesContent") var widgetHidesContent = false { didSet { publishWidget() } }
@@ -41,15 +47,16 @@ final class AppModel: ObservableObject {
     private var watcher: PasteboardWatcher?
     private var pruneTimer: Timer?
 
-    var groups: [SourceGroup] {
+    /// Entries grouped by source app, in order of each app's newest entry.
+    var groupsByApp: [SourceGroup] {
         var order: [String] = []
-        var byTitle: [String: [ClipEntry]] = [:]
+        var byApp: [String: [ClipEntry]] = [:]
         for entry in entries {
-            let title = entry.source.title
-            if byTitle[title] == nil { order.append(title) }
-            byTitle[title, default: []].append(entry)
+            let app = entry.source.app ?? "Unknown app"
+            if byApp[app] == nil { order.append(app) }
+            byApp[app, default: []].append(entry)
         }
-        return order.map { SourceGroup(title: $0, entries: byTitle[$0] ?? []) }
+        return order.map { SourceGroup(title: $0, bundleId: byApp[$0]?.first?.source.bundleId, entries: byApp[$0] ?? []) }
     }
 
     func start() {
@@ -95,6 +102,10 @@ final class AppModel: ObservableObject {
                 : try store.search(query, limit: 300)
             let newest = try store.recent(limit: 1).first
             if newest != latest { latest = newest }
+            total = try store.count()
+            let onClipboard = NSPasteboard.general.string(forType: .string).map(ClipHash.of)
+            currentEntryId = onClipboard.flatMap { hash in try? store.entry(hash: hash) }?.id
+            if let selectedId, !entries.contains(where: { $0.id == selectedId }) { self.selectedId = nil }
         } catch {
             errorMessage = "\(error)"
         }
@@ -128,6 +139,29 @@ final class AppModel: ObservableObject {
         guard let store else { return }
         _ = try? ClipActions.restore(id: entry.id, store: store)
         reload()
+    }
+
+    /// Move the keyboard selection up (-1) or down (+1).
+    func select(offset: Int) {
+        guard !entries.isEmpty else { return }
+        let index = selectedId.flatMap { id in entries.firstIndex { $0.id == id } }
+        let next = index.map { min(max($0 + offset, 0), entries.count - 1) } ?? (offset > 0 ? 0 : entries.count - 1)
+        selectedId = entries[next].id
+    }
+
+    /// Copy the selected entry, or the first one when nothing is selected. Returns whether anything was copied.
+    @discardableResult
+    func copySelected() -> Bool {
+        guard let entry = entries.first(where: { $0.id == selectedId }) ?? entries.first else { return false }
+        copy(entry)
+        return true
+    }
+
+    @discardableResult
+    func copy(at index: Int) -> Bool {
+        guard entries.indices.contains(index) else { return false }
+        copy(entries[index])
+        return true
     }
 
     func delete(_ entry: ClipEntry) {

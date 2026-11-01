@@ -38,6 +38,12 @@
   <sub>▶ <a href="docs/assets/clipsource-demo.mp4">Watch the MP4 with sound</a> (27 s)</sub>
 </p>
 
+<p align="center">
+  <img src="docs/assets/panel-light.png" alt="ClipSource panel, light mode" width="45%">
+  &nbsp;
+  <img src="docs/assets/panel-dark.png" alt="ClipSource panel, dark mode" width="45%">
+</p>
+
 ## 🤔 Why
 
 Say you have three Claude Code sessions, a WhatsApp group, Slack and a browser all writing to one clipboard. You paste, and only then wonder which chat the text was for and which session wrote it.
@@ -50,7 +56,7 @@ Say you have three Claude Code sessions, a WhatsApp group, Slack and a browser a
 |---|---|
 | 🏷️ **Source on every entry** | App, bundle ID, focused window or chat title, label, session ID, working directory, terminal |
 | 📍 **Live menu-bar status** | The menu bar shows where the latest copy came from, such as `Reply to Sam` or `WhatsApp` |
-| ⌨️ **⌥⌘V panel** | Floating search over the whole history. Group by source, then click to copy again. |
+| ⌨️ **⌥⌘V panel** | Floating search over the whole history, *Recent* or *By app*. Keyboard: ↑↓, Return to copy, ⌘1–9 for the top entries, Esc to close. |
 | 🧩 **Desktop widgets** | *Latest Copy* and *Recent Copies*, updated on every clipboard change. Click a row to copy it again. |
 | 🖥️ **`clipsrc` CLI** | A drop-in for `pbcopy` that adds a tag: `echo hi \| clipsrc copy --label "Sam reply"` |
 | 🤖 **MCP server** | AI agents copy with a label and read or search the history, for example from Claude Code |

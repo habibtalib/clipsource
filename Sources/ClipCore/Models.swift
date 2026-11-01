@@ -47,6 +47,21 @@ public struct ClipSourceInfo: Codable, Equatable, Sendable {
         }
     }
 
+    /// Window title without a trailing " - <App>" (browsers append the app and profile name).
+    public var cleanWindowTitle: String? {
+        guard var title = windowTitle?.trimmingCharacters(in: .whitespaces), !title.isEmpty else { return nil }
+        if let app, !app.isEmpty {
+            for separator in [" - ", " — ", " – "] {
+                if let range = title.range(of: separator + app, options: .backwards) {
+                    let rest = title[range.upperBound...]
+                    if rest.isEmpty || rest.hasPrefix(separator) { title = String(title[..<range.lowerBound]) }
+                }
+            }
+        }
+        title = title.trimmingCharacters(in: .whitespaces)
+        return title.isEmpty || title == app ? nil : title
+    }
+
     /// One-line description: app, window and folder.
     public var originLine: String {
         var parts: [String] = []

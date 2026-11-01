@@ -8,7 +8,8 @@ struct ClipSourceApp: App {
 
     var body: some Scene {
         MenuBarExtra {
-            HistoryView()
+            // Close the menu window after a copy, like the ⌥⌘V panel.
+            HistoryView(onPicked: { NSApp.keyWindow?.orderOut(nil) })
                 .environmentObject(AppModel.shared)
         } label: {
             MenuBarLabel(model: AppModel.shared)
@@ -28,16 +29,24 @@ struct MenuBarLabel: View {
 
     var body: some View {
         if model.menuBarShowsSource, let latest = model.latest {
-            HStack(spacing: 3) {
-                Image(systemName: model.paused ? "pause.circle" : "doc.on.clipboard")
+            HStack(spacing: 4) {
+                icon
                 Text(Self.short(latest.source.label ?? latest.source.app ?? latest.source.title))
             }
         } else {
-            Image(systemName: model.paused ? "pause.circle" : "doc.on.clipboard")
+            icon
         }
     }
 
-    private static func short(_ text: String, max: Int = 22) -> String {
+    @ViewBuilder private var icon: some View {
+        if model.paused {
+            Image(systemName: "pause.circle")
+        } else {
+            Image(nsImage: BrandIcons.menuBar)
+        }
+    }
+
+    private static func short(_ text: String, max: Int = 18) -> String {
         text.count > max ? String(text.prefix(max - 1)) + "…" : text
     }
 }
@@ -51,6 +60,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         MainActor.assumeIsolated {
             let model = AppModel.shared
             model.start()
+            if PanelSnapshot.runIfRequested(model: model) { return }
             panel = HistoryPanel(model: model)
             // ⌥⌘V opens the history panel.
             hotKey = HotKey(keyCode: HotKey.keyV, modifiers: HotKey.optionCommand) { [weak self] in

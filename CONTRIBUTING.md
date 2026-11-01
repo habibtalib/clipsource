@@ -17,6 +17,12 @@ To use a throwaway history while testing:
 export CLIPSOURCE_DB=/tmp/clipsource-dev.sqlite
 ```
 
+To render the history panel to a PNG without screen-recording permission (handy for screenshots):
+
+```bash
+CLIPSOURCE_DB=/tmp/sample.sqlite CLIPSOURCE_SNAPSHOT=panel.png CLIPSOURCE_SNAPSHOT_APPEARANCE=dark swift run ClipSource
+```
+
 ## Guidelines
 
 - Keep the project dependency-free. It uses only Apple frameworks and the system SQLite.
