@@ -23,31 +23,29 @@ struct ClipSourceApp: App {
     }
 }
 
-/// Live clipboard status in the menu bar: icon plus the newest entry's source.
+/// Menu bar: the icon only. A new copy shows its source next to the icon for a few seconds
+/// (Settings → "Show new copy in the menu bar for").
 struct MenuBarLabel: View {
     @ObservedObject var model: AppModel
 
     var body: some View {
-        if model.menuBarShowsSource, let latest = model.latest {
-            HStack(spacing: 4) {
-                icon
-                Text(Self.short(latest.source.label ?? latest.source.app ?? latest.source.title))
-            }
-        } else {
+        HStack(spacing: 4) {
             icon
+            if let text = model.menuBarFlash {
+                Text(text)
+                    .transition(.move(edge: .leading).combined(with: .opacity))
+            }
         }
     }
 
     @ViewBuilder private var icon: some View {
         if model.paused {
             Image(systemName: "pause.circle")
+        } else if model.menuBarFlash != nil {
+            Image(systemName: "checkmark.circle.fill")
         } else {
             Image(nsImage: BrandIcons.menuBar)
         }
-    }
-
-    private static func short(_ text: String, max: Int = 18) -> String {
-        text.count > max ? String(text.prefix(max - 1)) + "…" : text
     }
 }
 

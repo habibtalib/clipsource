@@ -56,7 +56,7 @@ Say you have three Claude Code sessions, a WhatsApp group, Slack and a browser a
 | | |
 |---|---|
 | 🏷️ **Source on every entry** | App, bundle ID, focused window or chat title, label, session ID, working directory, terminal |
-| 📍 **Live menu-bar status** | The menu bar shows where the latest copy came from, such as `Reply to Sam` or `WhatsApp` |
+| 📍 **Quiet menu bar** | Icon only. A new copy shows its source next to the icon for a few seconds (2–15 s, or off) |
 | 🔁 **Hold ⌘V to choose** | Like ⌘Tab for the clipboard. Tap ⌘V to paste as usual; hold it and the switcher opens. Press V or ↓ to move down, ⇧V or ↑ to move up, 1–9 to jump, and release ⌘ to paste the selected entry. Esc cancels. |
 | ✨ **Copy toast** | Each ⌘C shows a small animated card: a spinner while the source is looked up, then a check with the app, the Claude Code session or chat, and the repo and branch. |
 | 🧭 **Session and repo** | Copies from a terminal whose title is a Claude Code session are linked to that session (from its transcript), its folder and its git repo and branch. CLI and MCP copies get the same through their session ID. |

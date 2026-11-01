@@ -33,7 +33,11 @@ final class AppModel: ObservableObject {
     /// Keyboard selection in the history list.
     @Published var selectedId: Int64?
 
-    @AppStorage("menuBarShowsSource") var menuBarShowsSource = true
+    /// Seconds a new copy's source is shown next to the menu bar icon; 0 = icon only.
+    @AppStorage("menuBarFlashSeconds") var menuBarFlashSeconds = 4
+    /// Source text currently shown in the menu bar (nil = icon only).
+    @Published private(set) var menuBarFlash: String?
+    private var flashWork: DispatchWorkItem?
     /// Show the animated "Copied from …" toast after each ⌘C.
     @AppStorage("showCopyHUD") var showCopyHUD = true
     /// Hold ⌘V to choose which entry to paste (needs Accessibility).
@@ -131,7 +135,11 @@ final class AppModel: ObservableObject {
                 ? try store.recent(limit: 300)
                 : try store.search(query, limit: 300)
             let newest = try store.recent(limit: 1).first
-            if newest != latest { latest = newest }
+            if newest != latest {
+                // Flash the source of a genuinely new copy (not the first load at launch).
+                if let newest, latest != nil, newest.id != latest?.id || newest.createdAt != latest?.createdAt { flash(newest) }
+                latest = newest
+            }
             total = try store.count()
             let onClipboard = NSPasteboard.general.string(forType: .string).map(ClipHash.of)
             currentEntryId = onClipboard.flatMap { hash in try? store.entry(hash: hash) }?.id
@@ -211,6 +219,26 @@ final class AppModel: ObservableObject {
         let recent = (try? store?.recent(limit: limit)) ?? []
         loadDetails(for: recent)
         return recent
+    }
+
+    /// Shows the copy's source next to the menu bar icon for `menuBarFlashSeconds`, then goes back to icon only.
+    func flash(_ entry: ClipEntry) {
+        guard menuBarFlashSeconds > 0 else { return }
+        flashWork?.cancel()
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+            menuBarFlash = Self.short(entry.source.label ?? entry.source.cleanWindowTitle ?? entry.source.app ?? "Copied")
+        }
+        let work = DispatchWorkItem {
+            MainActor.assumeIsolated {
+                withAnimation(.easeOut(duration: 0.3)) { AppModel.shared.menuBarFlash = nil }
+            }
+        }
+        flashWork = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(menuBarFlashSeconds), execute: work)
+    }
+
+    private static func short(_ text: String, max: Int = 22) -> String {
+        text.count > max ? String(text.prefix(max - 1)) + "…" : text
     }
 
     func restore(id: Int64) {

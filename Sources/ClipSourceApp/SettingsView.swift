@@ -34,7 +34,13 @@ struct GeneralSettingsView: View {
             }
 
             Section("Status") {
-                Toggle("Show latest source in the menu bar", isOn: $model.menuBarShowsSource)
+                Picker("Show new copy in the menu bar for", selection: $model.menuBarFlashSeconds) {
+                    Text("Off (icon only)").tag(0)
+                    Text("2 seconds").tag(2)
+                    Text("4 seconds").tag(4)
+                    Text("8 seconds").tag(8)
+                    Text("15 seconds").tag(15)
+                }
                 Toggle("Show “Copied from …” toast after ⌘C", isOn: $model.showCopyHUD)
                 Toggle("Hold ⌘V to choose what to paste", isOn: $model.holdToChoosePaste)
                     .help("Tap ⌘V to paste as usual. Hold it to pick from recent copies; release ⌘ to paste. Needs Accessibility.")
