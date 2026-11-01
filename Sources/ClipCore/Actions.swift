@@ -20,6 +20,11 @@ public enum ClipActions {
         return try store.entry(id: id)
     }
 
+    /// Empty the system clipboard so nothing is left to paste. History is not touched.
+    public static func clearPasteboard() {
+        NSPasteboard.general.clearContents()
+    }
+
     public static func writePasteboard(_ text: String) {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()

@@ -66,6 +66,7 @@ Say you have three Claude Code sessions, a WhatsApp group, Slack and a browser a
 | 🤖 **MCP server** | AI agents copy with a label and read or search the history, for example from Claude Code |
 | ⌨️ **Chrome extension** | Types a history entry as real keystrokes into web consoles that ignore ⌘V, such as Guacamole and PAM portals like XTON. It types only on sites you've allowed. ⌥⇧V types the latest entry; ⌥⇧H opens the picker. |
 | 🔄 **Cross-device sync** | Opt-in. Sign in with GitHub or Google and every Mac shares one history, plus a web page for any other device. End-to-end encrypted. |
+| 🧹 **Clear in one click** | The trash menu in the panel empties the clipboard (nothing left to paste) or deletes the last 15 minutes, hour, today or everything. `clipsrc clear` does the same. |
 | 🔒 **Private by default** | History stays local in SQLite unless you turn on sync. Password-manager copies and excluded apps are never stored. |
 | 🪶 **Zero dependencies** | Swift, SwiftUI, AppKit, WidgetKit and the system SQLite (FTS5). That's all. |
 

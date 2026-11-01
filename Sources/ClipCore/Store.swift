@@ -154,6 +154,18 @@ public final class ClipStore: @unchecked Sendable {
         try run("DELETE FROM entries", [])
     }
 
+    /// Delete entries copied at or after `since` (leaving tombstones for synced ones). Returns how many were removed.
+    @discardableResult
+    public func clear(since: Date, at date: Date = Date()) throws -> Int {
+        let count = try scalarInt("SELECT COUNT(*) FROM entries WHERE created_at >= \(since.timeIntervalSince1970)")
+        try run("""
+        INSERT OR REPLACE INTO tombstones(remote_hash, deleted_at)
+        SELECT remote_hash, ? FROM entries WHERE remote_hash IS NOT NULL AND created_at >= ?
+        """, [date.timeIntervalSince1970, since.timeIntervalSince1970])
+        try run("DELETE FROM entries WHERE created_at >= ?", [since.timeIntervalSince1970])
+        return count
+    }
+
     // MARK: - Sync
 
     /// Entries changed locally since their last push, oldest first.

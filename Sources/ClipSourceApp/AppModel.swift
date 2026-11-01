@@ -18,6 +18,17 @@ final class AppModel: ObservableObject {
     @Published private(set) var entries: [ClipEntry] = []
     @Published private(set) var axTrusted = SourceResolver.isTrusted(prompt: false)
     @Published private(set) var errorMessage: String?
+    /// Short confirmation shown in the panel footer after a clear (disappears after a few seconds).
+    @Published var notice: String? {
+        didSet {
+            guard notice != nil else { return }
+            noticeWork?.cancel()
+            let work = DispatchWorkItem { MainActor.assumeIsolated { AppModel.shared.notice = nil } }
+            noticeWork = work
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: work)
+        }
+    }
+    private var noticeWork: DispatchWorkItem?
     @Published var query = "" { didSet { reload() } }
     @Published var paused = false {
         didSet {
@@ -288,6 +299,44 @@ final class AppModel: ObservableObject {
         try? store?.clear()
         reload()
         sync.schedulePush()
+    }
+
+    enum ClearRange: CaseIterable, Identifiable {
+        case fifteenMinutes, hour, today
+
+        var id: Self { self }
+        var title: String {
+            switch self {
+            case .fifteenMinutes: return "Last 15 minutes"
+            case .hour: return "Last hour"
+            case .today: return "Today"
+            }
+        }
+
+        func since(_ now: Date = Date()) -> Date {
+            switch self {
+            case .fifteenMinutes: return now.addingTimeInterval(-15 * 60)
+            case .hour: return now.addingTimeInterval(-3600)
+            case .today: return Calendar.current.startOfDay(for: now)
+            }
+        }
+    }
+
+    /// Removes recent history; says how many entries went.
+    func clear(_ range: ClearRange) {
+        guard let store else { return }
+        let removed = (try? store.clear(since: range.since())) ?? 0
+        reload()
+        sync.schedulePush()
+        notice = removed == 0 ? "Nothing copied in that time." : "Cleared \(removed) \(removed == 1 ? "entry" : "entries")."
+    }
+
+    /// Empties the system clipboard (nothing left to paste); the history stays.
+    func clearClipboard() {
+        ClipActions.clearPasteboard()
+        watcher?.adoptCurrentChange()
+        reload()
+        notice = "Clipboard cleared."
     }
 
     func prune() {

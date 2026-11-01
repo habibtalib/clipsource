@@ -11,6 +11,9 @@ USAGE
   clipsrc get <id> [--json]              Show one entry with its full text
   clipsrc restore <id>                   Put an older entry back on the clipboard
   clipsrc delete <id>                    Delete one entry
+  clipsrc clear --clipboard              Empty the system clipboard (history is kept)
+  clipsrc clear --since 1h               Delete history from the last 30m, 1h, 1d, … (or an ISO date)
+  clipsrc clear --all                    Delete all history
   clipsrc path                           Print the history database path
   clipsrc native-host [--install <extension-id> | --uninstall]   Chrome extension helper
 
@@ -342,6 +345,22 @@ do {
         let id = entryId(args)
         guard try store.entry(id: id) != nil else { fail("no entry with that id") }
         try store.delete(id: id)
+
+    case "clear":
+        if args.flags.contains("clipboard") {
+            ClipActions.clearPasteboard()
+            print("Clipboard cleared.")
+        }
+        if args.flags.contains("all") {
+            try store.clear()
+            print("History cleared.")
+        } else if let raw = args.options["since"] {
+            guard let since = ClipFormatter.parseSince(raw) else { fail("can't read --since '\(raw)' (try 30m, 1h, 1d)") }
+            let removed = try store.clear(since: since)
+            print("Deleted \(removed) \(removed == 1 ? "entry" : "entries").")
+        } else if !args.flags.contains("clipboard") {
+            fail("say what to clear: --clipboard, --since <30m|1h|1d>, or --all")
+        }
 
     case "path":
         print(store.url.path)

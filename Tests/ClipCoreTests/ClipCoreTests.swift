@@ -15,6 +15,16 @@ final class ClipStoreTests: XCTestCase {
         try? FileManager.default.removeItem(at: dir)
     }
 
+    func testClearSince() throws {
+        let now = Date()
+        try store.record(text: "old", origin: .watch, source: ClipSourceInfo(app: "A"), at: now.addingTimeInterval(-7200))
+        try store.record(text: "recent", origin: .watch, source: ClipSourceInfo(app: "A"), at: now.addingTimeInterval(-600))
+        try store.record(text: "newest", origin: .watch, source: ClipSourceInfo(app: "A"), at: now)
+        XCTAssertEqual(try store.clear(since: now.addingTimeInterval(-3600)), 2)
+        XCTAssertEqual(try store.recent(limit: 10).map(\.text), ["old"])
+        XCTAssertEqual(try store.clear(since: now), 0)
+    }
+
     func testRecordAndGet() throws {
         let source = ClipSourceInfo(app: "Terminal", bundleId: "com.apple.Terminal", windowTitle: "claude — mcmc", label: "Pang reply", cwd: "/tmp/mcmc")
         let entry = try store.record(text: "hello", origin: .cli, source: source)

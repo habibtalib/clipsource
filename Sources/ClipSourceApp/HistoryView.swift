@@ -183,11 +183,34 @@ struct HistoryView: View {
                 Image(systemName: "exclamationmark.octagon.fill").foregroundStyle(.red).help(error)
             }
 
+            if let notice = model.notice {
+                Text(notice)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .transition(.opacity)
+            }
+
             SyncStatusIcon(sync: model.sync)
 
             Menu {
+                Button { model.clearClipboard() } label: { Label("Clear clipboard (nothing to paste)", systemImage: "clipboard") }
+                Divider()
+                Section("Clear history") {
+                    ForEach(AppModel.ClearRange.allCases) { range in
+                        Button(range.title) { model.clear(range) }
+                    }
+                    Button("Everything…", role: .destructive) { confirmClear = true }
+                }
+            } label: {
+                Image(systemName: "trash")
+            }
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .fixedSize()
+            .help("Clear the clipboard or recent history")
+
+            Menu {
                 SettingsLink { Text("Settings…") }
-                Button("Clear History…") { confirmClear = true }
                 Divider()
                 Button("Quit ClipSource") { NSApp.terminate(nil) }
             } label: {
@@ -198,6 +221,7 @@ struct HistoryView: View {
             .fixedSize()
         }
         .font(.system(size: 12))
+        .animation(.easeOut(duration: 0.2), value: model.notice)
         .padding(.horizontal, 14)
         .padding(.vertical, 9)
     }
