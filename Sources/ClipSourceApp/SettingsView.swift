@@ -44,6 +44,8 @@ struct GeneralSettingsView: View {
                 Toggle("Show “Copied from …” toast after ⌘C", isOn: $model.showCopyHUD)
                 Toggle("Hold ⌘V to choose what to paste", isOn: $model.holdToChoosePaste)
                     .help("Tap ⌘V to paste as usual. Hold it to pick from recent copies; release ⌘ to paste. Needs Accessibility.")
+                Toggle("Copy text automatically when highlighted", isOn: $model.copyOnSelect)
+                    .help("Drag, double-click or ⇧-click to select text in any app and it goes to the clipboard. Password fields and excluded apps are skipped. Needs Accessibility.")
                 Toggle("Hide clipboard text in widgets", isOn: $model.widgetHidesContent)
                 if WidgetBridge.appGroupId == nil {
                     Text("Widgets need the Xcode build (Scripts/build-widgets.sh).")

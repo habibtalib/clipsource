@@ -62,12 +62,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             model.pasteSwitcher = PasteSwitcher(model: model)
             model.onPasteSwitcherSettingChanged = { MainActor.assumeIsolated { AppModel.shared.updatePasteSwitcher() } }
             model.updatePasteSwitcher()
-            // Accessibility may be granted later; check again periodically until the switcher runs.
+            model.selectionCopier = SelectionCopier(model: model)
+            model.updateSelectionCopier()
+            // Accessibility may be granted later; check again periodically until both features are running.
             Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { timer in
                 MainActor.assumeIsolated {
                     let model = AppModel.shared
                     model.updatePasteSwitcher()
-                    if model.pasteSwitcher?.isRunning == true || !model.holdToChoosePaste { timer.invalidate() }
+                    model.updateSelectionCopier()
+                    let switcherDone = model.pasteSwitcher?.isRunning == true || !model.holdToChoosePaste
+                    let copierDone = model.selectionCopier?.isRunning == true || !model.copyOnSelect
+                    if switcherDone && copierDone { timer.invalidate() }
                 }
             }
             panel = HistoryPanel(model: model)

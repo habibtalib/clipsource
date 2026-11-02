@@ -66,6 +66,20 @@ final class AppModel: ObservableObject {
         }
     }
 
+    /// Copy text to the clipboard as soon as it is highlighted with the mouse (needs Accessibility).
+    @AppStorage("copyOnSelect") var copyOnSelect = false { didSet { updateSelectionCopier() } }
+    var selectionCopier: SelectionCopier?
+
+    /// Starts or stops copy-on-select to match the setting and the Accessibility grant.
+    func updateSelectionCopier() {
+        guard let selectionCopier else { return }
+        if copyOnSelect && AXIsProcessTrusted() {
+            if !selectionCopier.isRunning { selectionCopier.start() }
+        } else if selectionCopier.isRunning {
+            selectionCopier.stop()
+        }
+    }
+
     /// Session, repo and chat for each entry, resolved in the background.
     @Published private(set) var details: [Int64: SourceDetails] = [:]
     private var detailsInFlight: Set<Int64> = []
@@ -140,6 +154,7 @@ final class AppModel: ObservableObject {
     func reload() {
         axTrusted = AXIsProcessTrusted()
         updatePasteSwitcher()
+        updateSelectionCopier()
         guard let store else { return }
         do {
             entries = query.trimmingCharacters(in: .whitespaces).isEmpty
